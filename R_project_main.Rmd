@@ -1,0 +1,24 @@
+---
+title: "R_project_main"
+author: "Jakub Piasek"
+date: "2024-05-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
+```
+
+
+```{r cache=FALSE, echo=FALSE}
+library('lintr')
+
+source("scraping.R", echo = T, local = knitr::knit_global())
+knitr::read_chunk('scraping.R')
+```
+
+
+```{r scraping.R, eval=F}
+
+```
+
