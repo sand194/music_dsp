@@ -357,7 +357,37 @@ display: none;
 </div>
 
 
+<pre class="r"><code>library(rvest)
 
+
+# Spotify
+## Weekly chart totals
+
+kworb_gwt &lt;- read_html(&quot;https://kworb.net/spotify/country/global_weekly_totals.html&quot;)
+
+td_elements &lt;- kworb_gwt %&gt;%
+  html_elements(&quot;td&quot;)
+
+extracted_text &lt;- html_text2(td_elements)
+
+
+## scraped data converted to data frame
+### 7 columns
+row_list &lt;- NULL
+current_row &lt;- NULL
+i &lt;- 0
+
+for(text in extracted_text){
+  current_row &lt;- append(current_row, text)
+  
+  
+  if (i%%8 == 0){
+    row_list &lt;- append(row_list, current_row)
+    current_row &lt;- NULL
+  }
+  
+  i &lt;- i + 1
+}</code></pre>
 
 
 
