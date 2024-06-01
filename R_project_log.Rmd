@@ -1,0 +1,12 @@
+---
+title: "R_project_log"
+author: "Jakub Piasek"
+date: "2024-05-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
+```
+
+# TODO

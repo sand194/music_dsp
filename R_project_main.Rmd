@@ -10,10 +10,10 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 ```
 
 
-```{r cache=FALSE, echo=FALSE}
+```{r cache=FALSE, echo=FALSE, results=FALSE}
 library('lintr')
 
-# source("scraping.R", echo = T, local = knitr::knit_global())
+source("scraping.R", echo = T, local = knitr::knit_global())
 knitr::read_chunk('scraping.R')
 ```
 
@@ -22,3 +22,29 @@ knitr::read_chunk('scraping.R')
 
 ```
 
+
+Ilość rekordów we wszystkich ramkach danych
+
+```{r}
+total_rows <- ls() %>%
+  set_names() %>%
+  map(~ get(.)) %>%
+  keep(is.data.frame) %>%
+  map_int(nrow) %>%
+  sum()
+
+
+total_rows
+
+total_rows > 30000
+```
+
+
+Czyszczenie z kolumny pos (tam gdzie trzeba)
+
+```{r}
+
+```
+
+
+#TODO

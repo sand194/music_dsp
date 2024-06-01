@@ -1,34 +1,86 @@
 ## ---- scraping.R
 
-
+library(tidyverse)
 library(rvest)
 
-
-# Spotify
-## Weekly chart totals
-
-kworb_gwt <- read_html("https://kworb.net/spotify/country/global_weekly_totals.html")
-
-td_elements <- kworb_gwt %>%
-  html_elements("td")
-
-extracted_text <- html_text2(td_elements)
+source("url_list.R", echo = T, local = knitr::knit_global())
 
 
-## scraped data converted to data frame
-### 7 columns
-row_list <- NULL
-current_row <- NULL
-i <- 0
 
-for(text in extracted_text){
-  current_row <- append(current_row, text)
+df_name_correction <- function(df, url){
+  # Changes the name of given data frame for correct variable labeling
+  
+  df_name <- gsub("https://kworb.net", "", url)
+  df_name <- gsub(".html", "", df_name)
+  df_name <- gsub("/", "_", df_name)
+  df_name <- sub("^_", "", df_name)
   
   
-  if (i%%8 == 0){
-    row_list <- append(row_list, current_row)
-    current_row <- NULL
+  assign(df_name, df, envir = .GlobalEnv)
+  
+}
+
+
+
+auto_scraping <- function(url){
+  # Automated web scraping of the pages with data
+  # Creates correctly formated data frames
+  
+  ## column header class: "th"
+  ## data row class: "td"
+  
+  
+  ### Getting column headers
+  columns <- read_html(url) %>%
+    html_elements("th") %>%
+    html_text2()
+  
+  
+  ### Getting data rows
+  rows <- read_html(url) %>%
+    html_elements("td") %>%
+    html_text2()
+  
+  
+  ## Converting scrapped data into a data frame
+  
+  ### Creating empty data frame with correct dimensions to fill
+  rows_df <- data.frame(matrix(ncol = length(columns), nrow = 0))
+  rows_df_colnames <- columns
+  
+  
+  current_row <- c()
+  
+  ### Filling in the data frame
+  for (i in 1:length(rows)){
+    
+    if (i%%length(columns) == 0){
+      current_row <- append(current_row, rows[i])
+      
+      rows_df <- rbind(rows_df, current_row)
+      
+      current_row <- c()
+    }
+    else{
+      current_row <- append(current_row, rows[i])
+    }
+    
   }
   
-  i <- i + 1
+  colnames(rows_df) <- rows_df_colnames
+  
+  
+  return(rows_df)
+  
 }
+
+
+
+# Iterating over the list of urls to create all of the needed data frames from scraped data
+for (i in 1:length(url_list)){
+  
+  data <- auto_scraping(url_list[i])
+  df_name_correction(data, url_list[i])
+  
+}
+

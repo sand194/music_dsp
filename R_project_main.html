@@ -357,37 +357,137 @@ display: none;
 </div>
 
 
-<pre class="r"><code>library(rvest)
+<pre><code>## 
+## &gt; library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre><code>## 
+## &gt; library(rvest)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rvest&#39;
+## 
+## The following object is masked from &#39;package:readr&#39;:
+## 
+##     guess_encoding</code></pre>
+<pre><code>## 
+## &gt; source(&quot;url_list.R&quot;, echo = T, local = knitr::knit_global())
+## 
+## &gt; library(rio)
+## 
+## &gt; url_list &lt;- c(&quot;https://kworb.net/spotify/country/global_weekly.html&quot;, 
+## +     &quot;https://kworb.net/spotify/country/global_weekly.html&quot;, &quot;https://kworb. ...&quot; ... [TRUNCATED] 
+## 
+## &gt; export(as.data.frame(url_list), &quot;url_list.csv&quot;, col.names = F)
+## 
+## &gt; df_name_correction &lt;- function(df, url) {
+## +     df_name &lt;- gsub(&quot;https://kworb.net&quot;, &quot;&quot;, url)
+## +     df_name &lt;- gsub(&quot;.html&quot;, &quot;&quot;, df_name)
+## +     df_n .... [TRUNCATED] 
+## 
+## &gt; auto_scraping &lt;- function(url) {
+## +     columns &lt;- read_html(url) %&gt;% html_elements(&quot;th&quot;) %&gt;% html_text2()
+## +     rows &lt;- read_html(url) %&gt;% html_elem .... [TRUNCATED] 
+## 
+## &gt; for (i in 1:length(url_list)) {
+## +     data &lt;- auto_scraping(url_list[i])
+## +     df_name_correction(data, url_list[i])
+## + }</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(rvest)
 
-
-# Spotify
-## Weekly chart totals
-
-kworb_gwt &lt;- read_html(&quot;https://kworb.net/spotify/country/global_weekly_totals.html&quot;)
-
-td_elements &lt;- kworb_gwt %&gt;%
-  html_elements(&quot;td&quot;)
-
-extracted_text &lt;- html_text2(td_elements)
-
-
-## scraped data converted to data frame
-### 7 columns
-row_list &lt;- NULL
-current_row &lt;- NULL
-i &lt;- 0
-
-for(text in extracted_text){
-  current_row &lt;- append(current_row, text)
+source(&quot;url_list.R&quot;, echo = T, local = knitr::knit_global())</code></pre>
+<pre><code>## 
+## &gt; library(rio)
+## 
+## &gt; url_list &lt;- c(&quot;https://kworb.net/spotify/country/global_weekly.html&quot;, 
+## +     &quot;https://kworb.net/spotify/country/global_weekly.html&quot;, &quot;https://kworb. ...&quot; ... [TRUNCATED] 
+## 
+## &gt; export(as.data.frame(url_list), &quot;url_list.csv&quot;, col.names = F)</code></pre>
+<pre class="r"><code>df_name_correction &lt;- function(df, url){
+  # Changes the name of given data frame for correct variable labeling
+  
+  df_name &lt;- gsub(&quot;https://kworb.net&quot;, &quot;&quot;, url)
+  df_name &lt;- gsub(&quot;.html&quot;, &quot;&quot;, df_name)
+  df_name &lt;- gsub(&quot;/&quot;, &quot;_&quot;, df_name)
+  df_name &lt;- sub(&quot;^_&quot;, &quot;&quot;, df_name)
   
   
-  if (i%%8 == 0){
-    row_list &lt;- append(row_list, current_row)
-    current_row &lt;- NULL
+  assign(df_name, df, envir = .GlobalEnv)
+  
+}
+
+
+
+auto_scraping &lt;- function(url){
+  # Automated web scraping of the pages with data
+  # Creates correctly formated data frames
+  
+  ## column header class: &quot;th&quot;
+  ## data row class: &quot;td&quot;
+  
+  
+  ### Getting column headers
+  columns &lt;- read_html(url) %&gt;%
+    html_elements(&quot;th&quot;) %&gt;%
+    html_text2()
+  
+  
+  ### Getting data rows
+  rows &lt;- read_html(url) %&gt;%
+    html_elements(&quot;td&quot;) %&gt;%
+    html_text2()
+  
+  
+  ## Converting scrapped data into a data frame
+  
+  ### Creating empty data frame with correct dimensions to fill
+  rows_df &lt;- data.frame(matrix(ncol = length(columns), nrow = 0))
+  rows_df_colnames &lt;- columns
+  
+  
+  current_row &lt;- c()
+  
+  ### Filling in the data frame
+  for (i in 1:length(rows)){
+    
+    if (i%%length(columns) == 0){
+      current_row &lt;- append(current_row, rows[i])
+      
+      rows_df &lt;- rbind(rows_df, current_row)
+      
+      current_row &lt;- c()
+    }
+    else{
+      current_row &lt;- append(current_row, rows[i])
+    }
+    
   }
   
-  i &lt;- i + 1
+  colnames(rows_df) &lt;- rows_df_colnames
+  
+  
+  return(rows_df)
+  
+}
+
+
+
+# Iterating over the list of urls to create all of the needed data frames from scraped data
+for (i in 1:length(url_list)){
+  
+  data &lt;- auto_scraping(url_list[i])
+  df_name_correction(data, url_list[i])
+  
 }</code></pre>
+<p>#TODO - wyczyścić z kolumny pos</p>
 
 
 
