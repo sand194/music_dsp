@@ -39,12 +39,43 @@ total_rows
 total_rows > 30000
 ```
 
+# Czyszczenie danych
 
-Czyszczenie z kolumny pos (tam gdzie trzeba)
+### Usuwanie kolumny "Pos"
+Aby uniknąć duplikatów w kolumnach, należy usunąć kolumnę "Pos"
 
 ```{r}
+# List containing all of the data frames in Global Environment
+data_frames <- ls() %>%
+  set_names() %>%
+  map(~ get(.)) %>%
+  keep(is.data.frame)
+
+
+dfs_affected <- c()
+
+
+for (i in 1:length(data_frames)){
+  
+  current_df <- data_frames[[i]]
+  
+  
+  if (grepl("Pos", names(current_df[1]))){
+   
+    current_df <- current_df %>%
+      select(-c(names(current_df[1])))
+    
+    dfs_affected <- append(dfs_affected, names(data_frames[i]))
+    
+    data_frames[[i]] <- current_df
+    
+  }
+ 
+}
+
+# teraz podmienić wszystkie zmienione data framy
 
 ```
 
 
-#TODO
+# TODO

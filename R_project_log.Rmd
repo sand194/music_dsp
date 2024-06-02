@@ -10,3 +10,17 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 ```
 
 # TODO
+
+## 30.05.2024
+- Znalezienie danych
+
+## 31.05.2024
+- Zebranie wszystkich urlów
+
+## 1.06.2024
+- Pliki scraping.R i url_list.R
+- Zliczenie wszystkich rekordów
+
+## 2.06.2024
+- Rozpoczęcie czyszczenia danych
+- Usunięcie kolumny "Pos" (duplikującej) z ramek danych, w których występowała
