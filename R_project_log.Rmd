@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 ```
 
-# TODO
+# TODO - poukładać i poopisywać ładnie wcześniejsze dni
 
 ## 30.05.2024
 - Znalezienie danych
@@ -24,3 +24,7 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 ## 2.06.2024
 - Rozpoczęcie czyszczenia danych
 - Usunięcie kolumny "Pos" (duplikującej) z ramek danych, w których występowała
+- Utworzenie funkcji, która zastępuje stare ramki danych na nowe w środowisku globalnym
+# TODO - wyeksportować surowe dane do folderu raw_data
+# TODO - wyeksportować wyczyszczone dane do folderu clean_data
+# TODO - zrobić requiRments na biblioteki

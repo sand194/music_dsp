@@ -45,37 +45,36 @@ total_rows > 30000
 Aby uniknąć duplikatów w kolumnach, należy usunąć kolumnę "Pos"
 
 ```{r}
-# List containing all of the data frames in Global Environment
-data_frames <- ls() %>%
-  set_names() %>%
-  map(~ get(.)) %>%
-  keep(is.data.frame)
+source("cleaning.R", echo = T, local = knitr::knit_global())
+knitr::read_chunk('cleaning.R')
+```
 
-
-dfs_affected <- c()
-
-
-for (i in 1:length(data_frames)){
-  
-  current_df <- data_frames[[i]]
-  
-  
-  if (grepl("Pos", names(current_df[1]))){
-   
-    current_df <- current_df %>%
-      select(-c(names(current_df[1])))
-    
-    dfs_affected <- append(dfs_affected, names(data_frames[i]))
-    
-    data_frames[[i]] <- current_df
-    
-  }
- 
-}
-
-# teraz podmienić wszystkie zmienione data framy
+```{r cleaning.R, eval=T}
 
 ```
 
 
-# TODO
+# TODO - sklasyfikować jakie gatunki są najchętniej słuchane (relacja: artysta - gatunek) pomiędzy wszystkimi platformami, może użyć MusicOSet
+
+```{r}
+# Data frame containing metadata about artists
+OSet_artists <- import("clean_data/musicoset_metadata/artists.csv")
+
+# OSet_artists genre variables unification
+OSet_artists <- OSet_artists %>%
+  mutate(main_genre = case_when(
+    grepl("rap", main_genre) ~ "rap",
+    grepl("hip hop", main_genre) ~ "rap",
+    grepl("drill", main_genre) ~ "rap",
+    grepl("rock", main_genre) ~ "rock",
+    grepl("country", main_genre) ~ "country",
+    grepl("r&b", main_genre) ~ "r&b",
+    grepl("edm", main_genre) ~ "edm",
+    .default = as.character(main_genre)
+  ))
+
+OSet_artists_genre <- OSet_artists %>%
+  select(c("name", "main_genre"))
+
+```
+
