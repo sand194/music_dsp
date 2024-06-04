@@ -54,7 +54,7 @@ knitr::read_chunk('cleaning.R')
 ```
 
 
-# TODO - sklasyfikować jakie gatunki są najchętniej słuchane (relacja: artysta - gatunek) pomiędzy wszystkimi platformami, może użyć MusicOSet
+# TODO - sklasyfikować jakie gatunki są najchętniej słuchane (relacja: artysta - gatunek) pomiędzy wszystkimi platformami, użyć MusicOSet
 
 ```{r}
 # Data frame containing metadata about artists
@@ -75,6 +75,76 @@ OSet_artists <- OSet_artists %>%
 
 OSet_artists_genre <- OSet_artists %>%
   select(c("name", "main_genre"))
+
+```
+
+
+
+
+```{r}
+# which data frames have artist variables
+
+# eu_artisttotals - only in europe
+# eua_artisttotals - based on albums - only in europe
+# ww_artisttotals
+# spotify_listeners
+# youtube_archive
+# apple_songs_artisttotals
+# apple_songs_eu_artisttotals - only in europe
+
+artists_genre_comparison <- ww_artisttotals%>%
+  inner_join(
+    spotify_listeners,
+    by = "Artist",
+    suffix = c(".ww", ".spotify")
+  ) %>%
+  inner_join(
+    youtube_archive,
+    by = "Artist",
+    suffix = c(".ww", ".youtube")
+  ) %>%
+  inner_join(
+    apple_songs_artisttotals,
+    by = "Artist",
+    suffix = c(".ww", ".apple")
+  )
+
+# Test to see if the are no duplicate rows
+artists_genre_comparison %>%
+  filter(Artist == "Adele")
+
+
+# Column cleaning
+artists_genre_comparison$Total.youtube <- str_replace_all(artists_genre_comparison$Total.youtube, ",","")
+artists_genre_comparison$Total.ww <- str_replace_all(artists_genre_comparison$Total.ww, ",", "")
+artists_genre_comparison$PkListeners <- str_replace_all(artists_genre_comparison$PkListeners, ",", "")
+artists_genre_comparison$Total <- str_replace_all(artists_genre_comparison$Total, ",", "")
+
+artists_genre_comparison <- artists_genre_comparison %>%
+  transform(
+    Total.youtube = as.numeric(Total.youtube)
+  ) %>%
+  transform(
+    Total.ww = as.numeric(Total.ww)
+  ) %>%
+  transform(
+    PkListeners = as.numeric(PkListeners)
+  ) %>%
+  transform(
+    Total = as.numeric(Total)
+  ) %>%
+  mutate(
+    # Total.youtube column is equal to total views in millions
+    Total.youtube = as.numeric(Total.youtube) * 1000000
+  )
+
+
+# Sum column
+artists_genre_comparison <- artists_genre_comparison %>%
+  mutate(
+    sum = Total.youtube + Total.ww + Total + PkListeners
+  ) %>%
+  arrange(desc(sum))
 
 ```
 

@@ -28,3 +28,10 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 # TODO - wyeksportować surowe dane do folderu raw_data
 # TODO - wyeksportować wyczyszczone dane do folderu clean_data
 # TODO - zrobić requiRments na biblioteki
+
+
+## 3.06.2024
+
+
+## 4.06.2024
+- artists_genre_comparison
