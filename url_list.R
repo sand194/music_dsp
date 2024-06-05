@@ -1,6 +1,5 @@
 ## ---- url_list.R
 
-library(rio)
 
 
 url_list <- c(
@@ -150,6 +149,3 @@ url_list <- c(
   
 )
 
-
-# Saving url_list to csv
-export(as.data.frame(url_list), "url_list.csv", col.names = F)

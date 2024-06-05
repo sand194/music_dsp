@@ -28,3 +28,19 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 # TODO - wyeksportować surowe dane do folderu raw_data
 # TODO - wyeksportować wyczyszczone dane do folderu clean_data
 # TODO - zrobić requiRments na biblioteki
+
+
+## 3.06.2024
+
+
+## 4.06.2024
+- Utworzyłem `artist_genre_comparison`, czyli data frame łączący statystyki artystów ze wszystkich serwisów, do tego zsumowałem wszystkie statystyki dotyczące słuchaczy/wyświetleń do jednej kolumny `Sum_listeners_views_across`, a także przypisałem każdemu artyście odpowiedni (ogólny) gatunek
+- Czyszczenie kolumn w `artist_genre_comparison` i ich nazw
+- Problem: odpowiednie łączenie po kolei ramek danych za pomocą `join()`
+
+
+## 5.06.2024
+- packrat - package dependencies
+- Data import/export pipeline
+- Problem: poprawna kolejność pipelinu oraz pozbycie się ".csv" z nazw importowanych zmiennych
+- Wizualizacja najchętniej słuchanych gatunków na wszystkich platformach
