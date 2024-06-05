@@ -1,0 +1,201 @@
+Pos,P+,Artist and Title,Days,Pk,(x?),Pts,Pts+,TPts,UK,DE,FR,IT,RU
+1,=,Billie Eilish - HIT ME HARD AND SOFT,19,1,(x19),22644,+43,0.434,1,1,3,4,""
+2,=,Taylor Swift - THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY,47,1,(x20),21040,-11,1.036,2,3,13,11,""
+3,+1,Dua Lipa - Radical Optimism,54,1,(x7),18532,+441,1.015,17,11,11,18,""
+4,-1,twenty one pilots - Clancy,41,3,(x9),18281,+100,0.419,10,9,28,15,""
+5,=,Bring Me The Horizon - POST HUMAN: NeX GEn,12,4,"",17432,+182,0.228,3,4,63,21,""
+6,=,Gunna - One of Wun,26,2,(x6),16749,+469,0.503,5,10,15,43,""
+7,=,Taylor Swift - THE TORTURED POETS DEPARTMENT,47,1,(x1),14886,-97,0.877,6,13,68,49,""
+8,+1,Ariana Grande - eternal sunshine,89,1,(x1),14098,+615,1.655,19,32,38,33,""
+9,-1,Beyoncé - COWBOY CARTER,68,1,(x14),14074,-144,1.298,12,21,37,54,""
+10,+1,Ayra Starr - The Year I Turned 21,5,9,"",11867,-266,0.063,7,45,12,104,""
+11,-1,Lenny Kravitz - Blue Electric Light,14,6,"",11594,-1218,0.191,165,18,60,38,31
+12,=,Olivia Rodrigo - GUTS,271,1,(x21),11397,+105,3.675,20,15,155,48,""
+13,+4,Future & Metro Boomin - WE DON'T TRUST YOU,75,1,(x7),10828,+916,1.303,43,22,54,51,""
+14,=,"Shaboozey - Where I've Been, isn't Where I'm Going",14,14,"",10503,+82,0.105,11,20,180,103,173
+15,-2,Taylor Swift - 1989,613,1,(x26),10431,-188,5.753,27,31,80,84,167
+16,=,Travis Scott - UTOPIA,313,1,(x42),10005,+55,5.021,88,24,85,30,""
+17,+1,Taylor Swift - Midnights,593,1,(x33),8706,+1220,8.690,32,42,97,77,""
+18,-3,ATEEZ - GOLDEN HOUR : Part.1 - EP,5,10,"",8059,-2035,0.056,128,29,100,63,""
+19,+12,Charli XCX - BRAT,44,6,"",7769,+2207,0.296,30,94,162,52,""
+20,+1,Taylor Swift - reputation,1517,1,(x12),7737,+882,9.404,37,50,79,97,""
+21,-1,Benson Boone - Fireworks & Rollerblades,75,5,"",7603,+545,0.814,26,59,108,96,""
+22,+1,Frank Ocean - Blonde,1953,7,"",6936,+149,5.529,66,47,152,68,""
+23,-1,Taylor Swift - Lover,1599,1,(x7),6886,+91,9.519,29,52,96,117,""
+24,+2,Monetochka - Молитвы. Анекдоты. Тосты.,12,20,"",6832,+528,0.088,"",93,"","",1
+25,-6,Lauryn Hill - The Miseducation of Lauryn Hill,18,2,(x1),6828,-274,0.374,53,35,105,80,""
+26,-2,Taylor Swift - folklore,1410,1,(x27),6779,+134,11.024,31,75,166,141,""
+27,-2,Vince Staples - Dark Times,12,10,"",6567,+123,0.139,46,67,195,163,""
+28,=,Various Artists - Bridgerton Season Three,19,8,"",6108,+287,0.173,92,25,192,"",""
+29,+8,"Benny Andersson, Björn Ulvaeus, Meryl Streep & Amanda Seyfried - Mamma Mia",1245,6,"",5672,+302,5.539,50,44,194,148,""
+30,-1,SCH - JVLIVS Prequel : Giulio,5,28,"",5629,-55,0.029,"",175,1,"",""
+31,+3,Bushido - König für immer,5,31,"",5391,-15,0.027,"",2,"","",""
+32,-5,Amy Winehouse - Back to Black,98,17,"",5384,-456,1.467,36,65,91,135,179
+33,+7,Zed - Malcom,5,33,"",5228,-8,0.026,"","",2,"",""
+34,+5,Becky Hill - Believe Me Now,5,24,"",5182,-107,0.032,8,"","","",""
+35,-3,ABBA - ABBA Gold: Greatest Hits,1069,10,"",5172,-285,5.705,56,40,"","",""
+36,+11,Chris Brown - 11:11,208,2,(x3),5117,+546,2.048,28,63,128,"",""
+37,-2,PARTYNEXTDOOR - PARTYNEXTDOOR 4,56,2,(x4),5106,-298,0.456,21,98,107,"",""
+38,-8,aespa - Armageddon - The 1st Album,9,8,"",5102,-562,0.092,103,73,122,132,""
+39,+4,"¥$, Kanye West & Ty Dolla $ign - VULTURES 1",109,1,(x33),5022,+182,1.735,100,90,"",82,36
+40,+2,Lana Del Rey - Born to Die - The Paradise Edition,1487,18,"",5016,-80,6.040,95,"","","",32
+41,=,Baby Lullaby Academy - Baby Lullaby: Relaxing Piano Lullabies and Natural Sleep Aid for Baby Sleep Music,1524,16,"",4990,-125,6.573,9,127,"","",""
+42,-6,"Benj Pasek & Justin Paul, Hugh Jackman - The Greatest Showman",673,2,(x1),4939,-460,4.518,25,37,"",146,""
+43,-10,Beth Gibbons - Lives Outgrown,20,9,"",4793,-637,0.164,150,38,"","",""
+44,-6,"RM - Right Place, Wrong Person",12,8,"",4780,-553,0.128,197,114,"","",9
+45,+5,Chappell Roan - The Rise and Fall of a Midwest Princess,56,45,"",4777,+371,0.167,16,108,"",167,""
+46,+2,Dardan & Azet - EUROSPORT,12,38,"",4695,+198,0.057,"",6,"","",""
+47,-2,RK - DLPDA,5,43,"",4688,-46,0.024,"","",4,"",""
+48,-2,Troye Sivan - Something To Give Each Other,151,3,(x7),4620,+33,1.217,84,91,115,101,""
+49,+8,Hugo (TSR) - La Pluie,5,49,"",4359,+427,0.020,"","",9,"",""
+50,-6,Olivia Rodrigo - SOUR,1083,1,(x38),4287,-512,9.127,69,41,"",140,""
+51,+2,Kings of Leon - Can We Please Have Fun,31,6,"",4251,+160,0.301,24,92,"","",""
+52,-1,THEODORT - Imad,12,37,"",4249,-60,0.058,"","",6,"",""
+53,+2,Werenoi - Pyramide,110,22,"",4187,+135,0.562,"","",5,"",""
+54,-5,Lena - Loyal to myself,5,45,"",4159,-262,0.024,"",5,"","",""
+55,+3,Future & Metro Boomin - WE STILL DON'T TRUST YOU,54,1,(x7),4076,+169,0.697,60,87,98,118,""
+56,-4,Travis Scott - ASTROWORLD,1781,1,(x12),4065,-170,14.775,158,69,164,58,90
+57,+7,Beyoncé - RENAISSANCE,676,1,(x68),3933,+305,9.143,70,126,125,147,""
+58,+8,Eminem - The Eminem Show,644,8,"",3908,+310,2.710,52,77,"","",59
+59,=,HoodBlaq - XABAT,5,50,"",3875,-5,0.020,"",8,"","",""
+60,+11,Lana Del Rey - Norman Fucking Rockwell,705,24,"",3782,+437,2.586,101,142,"",81,135
+61,+4,Dadju & Tayc - HÉRITAGE,110,4,"",3780,+160,0.519,"","",7,"",""
+62,+5,"Kendrick Lamar - good kid, m.A.A.d city",257,16,"",3761,+169,1.961,98,86,"",182,64
+63,-9,Angelina Mango - poké melodrama,5,52,"",3759,-296,0.020,"","","",3,""
+64,+6,Tyla - TYLA,85,5,"",3729,+349,0.771,49,141,119,"",""
+65,-4,"David Guetta - Live At Hï Ibiza: Future Rave, Aug 25, 2023",4,50,"",3616,-214,0.015,47,"","",47,""
+66,-4,SANTA - RECOMMENCE-MOI,12,44,"",3610,-161,0.052,"","",23,"",""
+67,-4,Willie Nelson - The Border,5,41,"",3509,-208,0.021,"",81,"","",""
+68,-8,SZA - SOS,546,1,(x6),3505,-367,4.302,59,"",111,173,""
+69,NEW,Cigarettes After Sex - X's,1,69,"",3457,+3457,0.003,115,95,182,162,66
+70,+3,Verschiedene Interpreten - Die 30 besten Schlaflieder für Kinder,1306,41,"",3423,+118,4.039,"",14,"","",""
+71,+4,Pink Floyd - The Dark Side of the Moon,620,5,"",3285,+10,3.848,93,144,"",74,127
+72,-4,Jimin - FACE - EP,133,1,(x1),3227,-298,0.731,"","","","",4
+73,+5,Tedua - La Divina Commedia,369,49,"",3224,+27,0.885,"","","",1,""
+74,+5,Timal - Darvaza - EP,19,35,"",3200,+6,0.081,"","",8,"",""
+75,-1,JONY - Epic - EP,5,74,"",3186,-97,0.015,"","","","",2
+76,+1,Baby Melo - Who Realer,5,70,"",3150,-109,0.016,"","","","",3
+77,-21,Bad Omens - CONCRETE JUNGLE,5,34,"",3122,-837,0.021,79,62,"","",""
+78,+12,Nirvana - Nevermind,407,13,"",3102,+251,2.449,82,88,"","",62
+79,+8,Kanye West - Graduation,582,16,"",3090,+196,3.124,105,118,"",155,74
+80,-8,Bob Marley & The Wailers - Legend – The Best Of Bob Marley & The Wailers,300,10,"",3043,-290,1.250,54,83,"","",""
+81,+3,Vacra - Pygmalion,19,43,"",3042,+54,0.071,"","",16,"",""
+82,+15,Teddy Swims - I've Tried Everything But Therapy,195,15,"",3007,+268,1.071,33,"","","",""
+83,+10,Ultimo - ALTROVE,19,44,"",2994,+218,0.068,"","","",7,""
+84,-8,Crowded House - Gravity Stairs,5,55,"",2988,-275,0.017,67,"","","",""
+85,+6,Gazo & Tiakola - LA MELO EST GANGX,187,13,"",2972,+139,0.879,"","",14,"",""
+86,-17,CANEY030 - BUTTERFLY,5,63,"",2964,-537,0.017,"",12,"","",""
+87,-6,Roy Bianco & Die Abbrunzati Boys - Kult,5,81,"",2961,-104,0.033,"",7,"","",""
+88,+8,"Billie Eilish - WHEN WE ALL FALL ASLEEP, WHERE DO WE GO",1341,1,(x69),2958,+195,15.010,163,100,160,165,124
+89,-7,Capo Plaza - FERITE,33,31,"",2950,-41,0.128,"","","",6,""
+90,+5,MadMan - LONEWOLF,5,79,"",2892,+126,0.015,"","","",2,""
+91,-11,Arctic Monkeys - AM,2485,8,"",2888,-240,8.784,77,150,"",150,49
+92,-6,Osirus Jack - TSAR NOIR,12,40,"",2887,-52,0.050,"","",20,"",""
+93,+5,Booba - AD VITAM ÆTERNAM,117,21,"",2871,+162,0.528,"","",18,"",""
+94,+11,Pearl Jam - Dark Matter,48,4,"",2831,+226,0.511,104,121,"",107,""
+95,-7,Jul - Décennie,138,16,"",2813,-72,0.523,"","",10,"",""
+96,-2,FRIENDLY THUG 52 NGG - Cristoforo Colombo,215,35,"",2789,+20,0.675,"","","","",5
+97,+7,Rammstein - RAMMSTEIN,1632,3,(x17),2785,+166,8.153,"",55,"","",47
+98,+3,Taylor Swift - evermore,1176,1,(x27),2777,+141,7.600,61,120,"","",""
+99,-10,K-Trap - SMILE,5,70,"",2681,-184,0.025,4,"","","",""
+100,-15,Zaho de Sagazan - La symphonie des éclairs,166,39,"",2674,-312,0.597,"",151,40,"",""
+101,-1,Tony Effe - ICON,82,31,"",2664,+27,0.269,"","","",8,""
+102,+1,Miyagi & Эндшпиль - NARRATIVE,145,12,"",2621,-1,0.539,"","","","",7
+103,+14,Ninho - NI,341,15,"",2576,+272,1.404,"","",17,"",""
+104,+2,Платина - Платина,61,39,"",2537,-42,0.207,"","","","",8
+105,-3,Diss Gacha & Sala - Cultura Italiana Pt.1,5,81,"",2531,-103,0.014,"","","",5,""
+106,+5,PLK - Chambre 140,138,24,"",2502,+72,0.582,"","",22,"",""
+107,+14,Noah Kahan - Stick Season,362,8,"",2489,+262,1.518,23,"","","",""
+108,+26,Kanye West - My Beautiful Dark Twisted Fantasy,317,35,"",2489,+466,1.926,108,129,"",139,95
+109,-1,"Schlafmusik, Entspannungsmusik Oase & Regengeräusche - Regengeräusche",393,68,"",2474,-85,1.452,"",16,"","",""
+110,-3,Mary Gu - luvcore,84,57,"",2450,-112,0.223,"","","","",6
+111,+1,Bad Bunny - Un Verano Sin Ti,673,3,(x3),2449,+21,4.117,"","",191,66,""
+112,-29,Richard Hawley - In This City They Call You Love,5,66,"",2437,-552,0.015,44,"","","",""
+113,-3,Rammstein - Mutter,337,69,"",2389,-46,1.920,"",116,"","",28
+114,NEW,WayV - Give Me That - The 5th Mini Album - EP,1,114,"",2360,+1201,0.004,"","","","",27
+115,-16,"Tea Tairovic - Album ""TEA""",2,99,"",2339,-363,0.006,"",80,"","",""
+116,+7,MAYOT - З4ПРАВК4 КИД,26,54,"",2306,+93,0.078,"","","","",11
+117,-8,Favé - IL LE FALLAIT,53,32,"",2294,-212,0.200,"","",27,"",""
+118,+82,Rammstein - Zeit,686,2,(x7),2284,+730,4.334,"",46,"","",""
+119,=,Bouss - Depuis le temps,34,97,"",2267,0,0.074,"","",19,"",""
+120,-5,Fleetwood Mac - Rumours,713,11,"",2223,-103,3.105,57,131,"","",""
+121,-3,Baby Gang - L'Angelo del Male,40,25,"",2214,-63,0.148,"","","",10,""
+122,-2,163ONMYNECK & Polyana - Ойкумена,12,73,"",2187,-69,0.032,"","","","",14
+123,+1,Oasis - Definitely Maybe,12,88,"",2178,-19,0.377,14,"","","",""
+124,-2,"SLIMUS - Спокойной ночи, малыши, Часть 2",19,68,"",2175,-52,0.051,"","","","",10
+125,-9,Billie Eilish - Happier Than Ever,1052,1,(x29),2167,-144,8.666,157,162,"","",113
+126,+2,Gigi D'Alessio - Fra,12,72,"",2164,+76,0.032,"","","",13,""
+127,+21,Jung Kook - GOLDEN,214,1,(x6),2161,+213,1.291,"","","","",22
+128,-1,Imagine Dragons - LOOM,12,31,"",2151,+30,0.043,"",185,"",115,""
+129,+3,Eva - Page blanche,33,42,"",2150,+86,0.114,"","",31,"",""
+130,-5,Salmo & Noyz Narcos - CVLT - HELLRAISERS,19,63,"",2137,0,0.051,"","","",9,""
+131,-5,Navai - Как Есенин,89,51,"",2113,-12,0.233,"","","","",12
+132,-2,Apache 207 - Gartenstadt,399,32,"",2099,+18,1.463,"",17,"","",""
+133,-4,ANNA ASTI - Царица,250,22,"",2098,+11,0.742,"","","","",13
+134,-42,Above & Beyond - Group Therapy 581,3,92,"",2097,-700,0.008,"","","","",38
+135,=,Nk Divine - DESTINÉE chapitre II in ut regium,32,34,"",2060,+43,0.100,"","",44,"",""
+136,-23,Tate McRae - THINK LATER,179,2,(x9),2046,-377,1.699,80,124,"","",""
+137,+17,Whole Lotta Swag - NEW COAST,54,79,"",2033,+114,0.130,"","","","",17
+138,+18,Lana Del Rey - Born to Die – Paradise Edition,260,53,"",2018,+120,1.179,"",49,"","",""
+139,+4,Kid Yugi - I Nomi del Diavolo,95,57,"",2016,+39,0.236,"","","",12,""
+140,-2,Big Baby Tape - Varskva,194,26,"",2009,+6,0.539,"","","","",19
+141,+3,Jul - Dans ma paranoïa,55,95,"",2007,+32,1.230,"","",21,"",""
+142,+13,Monetochka - Раскраски для взрослых,11,142,"",1999,+94,0.194,"","","","",15
+143,-7,Rain Sounds - To Fall Asleep To,323,119,"",1977,-39,1.029,13,"","","",""
+144,-13,Lesha Svik - Я-Начало - EP,12,79,"",1958,-120,0.032,"","","","",18
+145,+72,Eminem - The Marshall Mathers LP,4,137,"",1957,+556,0.338,38,195,"","",""
+146,+4,Vale Pain - Vp Drive 1,5,146,"",1939,0,0.010,"","","",14,""
+147,-5,Kendrick Lamar - Mr. Morale & The Big Steppers,495,1,(x7),1931,-48,3.951,111,147,"",192,""
+148,+18,Joé Dwèt Filé - GOUMIN TERMINÉ,54,40,"",1923,+114,0.159,"","",24,"",""
+149,+10,"Simone Sommerland, Karsten Glück & Die Kita-Frösche - Die 30 besten Spiel- und Bewegungslieder",875,85,"",1923,+54,2.579,"",27,"","",""
+150,-9,So La Lune - NUMERO 11 - EP,12,51,"",1921,-61,0.040,"","",26,"",""
+151,-12,Justice - Hyperdrama,46,5,"",1911,-84,0.354,"",177,47,"",""
+152,-5,Adele - 21,1208,12,"",1906,-42,4.491,102,111,"","",176
+153,=,"SleepTherapy - Brown Noise: Loops for Relaxation, Deep Sleep, Meditation, And Babies",368,125,"",1901,-23,0.941,15,"","","",""
+154,+16,Jul - La route est longue,180,21,"",1899,+123,0.624,"","",25,"",""
+155,+34,Ferris MC - Mortal Comeback,3,155,"",1879,+276,0.008,"",30,"","",""
+156,-7,Paula Hartmann - kleine Feuer,107,30,"",1867,-73,0.361,"",28,"","",""
+157,+3,Club Dogo - Club Dogo,145,39,"",1865,0,0.372,"","","",16,""
+158,-7,"Детские сны Звезда Academy - Детские сны - Музыка для малышей и детей, колыбельные музыка, успокаивающие звуки для глубокого расслабления и сна",1275,105,"",1865,-72,3.226,"","","","",16
+159,-7,Kinder Lieder - Die 30 schönsten Kinderlieder - Teil 1,943,72,"",1863,-68,2.640,"",19,"","",""
+160,+3,Meekz - TRU,12,113,"",1847,+12,0.026,18,"","","",""
+161,-4,FRIENDLY THUG 52 NGG - Cruiser Aurora,242,129,"",1839,-53,0.968,"","","","",21
+162,+32,Harry Styles - Harry's House,726,1,(x25),1831,+245,7.648,75,"","","",""
+163,+2,MACE - MĀYĀ,61,60,"",1829,0,0.149,"","","",17,""
+164,+9,Taylor Swift - Fearless,419,1,(x3),1823,+78,2.055,68,167,"","",""
+165,-1,Peter Fox - Love Songs,359,29,"",1805,-26,1.117,"",23,"","",""
+166,+11,Kendrick Lamar - DAMN.,649,4,"",1783,+109,5.967,116,170,"",183,""
+167,-21,Saliou - Jiggy in Berlin,5,140,"",1783,-182,0.010,"",34,"","",""
+168,+35,Genezio - BOUNCE MUSIC - EP,3,121,"",1780,+256,0.018,"","",35,"",""
+169,-2,"OG BUDA - Cкучаю, Но Работаю",403,44,"",1777,-25,0.978,"","","","",25
+170,+45,Slash - Orgy of the Damned,18,8,"",1773,+364,0.135,"",78,"","",""
+171,+3,Sfera Ebbasta - X2VR,201,22,"",1759,+34,0.587,"","","",19,""
+172,+44,Metallica - Metallica,95,13,"",1746,+338,1.844,"",109,"","",115
+173,-1,Green Montana - SAUDADE,61,31,"",1746,-3,0.236,"","",43,"",""
+174,+7,Rose Villain - RADIO SAKURA,88,64,"",1725,+66,0.206,"","","",20,""
+175,-13,BATO - Другой,5,152,"",1725,-119,0.009,"","","","",20
+176,+50,Lana Del Rey - Ultraviolence,185,44,"",1725,+373,1.256,190,"","",144,69
+177,-40,Paul Weller - 66,12,22,"",1717,-295,0.054,39,"","","",""
+178,+6,M Huncho & Potter Payper - 36 Hours,26,47,"",1714,+87,0.068,22,"","","",""
+179,-65,Marcus & Martinus - Unforgettable,5,80,"",1696,-719,0.013,"","","","",""
+180,+17,"Lin-Manuel Miranda, Leslie Odom, Jr., Phillipa Soo, Daveed Diggs & Christopher Jackson - Hamilton: An American Musical",670,37,"",1684,+105,1.650,34,"","","",""
+181,+15,Metro Boomin - HEROES & VILLAINS,545,1,(x46),1671,+91,5.907,"",123,"",126,""
+182,+56,Aarne - AA LANGUAGE 2,217,25,"",1661,+367,0.550,"","","","",24
+183,+2,Papa V & Fritu - Trap Fatta Bene,46,87,"",1659,+32,0.093,"","","",22,""
+184,+4,Basta & Guf - Basta / Guf,49,156,"",1649,+42,0.542,"","","","",29
+185,-45,La superstar des comptines rondes et berceuses - Comptines et chansons pour enfants,357,78,"",1643,-351,1.731,"","",41,"",""
+186,-53,Arooj Aftab - Night Reign,5,118,"",1637,-394,0.010,"","","","",""
+187,-7,AYLIVA - Schwarzes Herz,302,25,"",1635,-31,1.089,"",33,"","",""
+188,-19,"Peter Plate, Ulf Leo Sommer & Bibi und Tina - Bibi und Tina",225,86,"",1632,-160,0.852,"",36,"","",""
+189,NEW,Zartmann - dafür bin ich frei,7,129,"",1628,+602,0.016,"",39,"","",""
+190,+11,Mida - IL SOLE DENTRO - EP,18,132,"",1627,+91,0.035,"","","",23,""
+191,-9,белый шум для детей - Дождь,99,125,"",1627,-32,0.637,"","","","",23
+192,+30,Tiakola - X - EP,88,15,"",1619,+243,0.321,"","",33,"",""
+193,+9,Werenoi - Carré,450,29,"",1609,+85,1.584,"","",34,"",""
+194,-2,Taylor Swift - Red,572,1,(x7),1606,+9,3.036,78,196,"","",""
+195,+14,SCH - JVLIVS,203,29,"",1602,+139,1.424,"","",29,"",""
+196,-38,Saltatio Mortis - Finsterwacht,3,158,"",1598,-275,0.007,"",26,"","",""
+197,-29,Mikush & Timon - CAPO DELLA JERSEY,5,137,"",1596,-197,0.009,"","","",24,""
+198,-3,Ninho - Jefe,909,14,"",1595,+9,3.094,"","",32,"",""
+199,-23,Big Baby Tape & kizaru - BANDANA I,797,31,"",1581,-97,2.282,"","","","",35
+200,+12,Ollane - Notes - EP,1,200,"",1576,+133,0.003,"","","","",26

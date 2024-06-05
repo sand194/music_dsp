@@ -3,7 +3,7 @@
 library(tidyverse)
 library(rvest)
 
-source("url_list.R", echo = T, local = knitr::knit_global())
+source("url_list.R", echo = F, local = knitr::knit_global())
 
 
 

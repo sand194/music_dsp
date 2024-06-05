@@ -13,7 +13,7 @@ replace_global <- function(data_frame_list, dfs_affected_list){
     for (j in 1:length(dfs_affected_list)){
       
       if (dfs_affected_list[j] == names(data_frame_list[i])){
-        # rm(list = dfs_affected_list[j]) # Deleting old data frame from Global Environment - turns out is not necessary
+        # rm(list = dfs_affected_list[j]) # Deleting old data frame from Global Environment - turns out it is not necessary
         
         assign(dfs_affected_list[j], data_frame_list[[i]], envir = .GlobalEnv)
       }
@@ -22,13 +22,6 @@ replace_global <- function(data_frame_list, dfs_affected_list){
   
 }
 
-
-
-# List containing all of the data frames in Global Environment
-data_frames <- ls() %>%
-  set_names() %>%
-  map(~ get(.)) %>%
-  keep(is.data.frame)
 
 
 dfs_affected <- c() # Vector with names of data frames that will be affected while removing "Pos" column
