@@ -70,6 +70,7 @@ OSet_artists <- OSet_artists %>%
     grepl("country", main_genre) ~ "country",
     grepl("r&b", main_genre) ~ "r&b",
     grepl("edm", main_genre) ~ "edm",
+    grepl("pop", main_genre) ~ "pop",
     .default = as.character(main_genre)
   ))
 
@@ -92,6 +93,9 @@ OSet_artists_genre <- OSet_artists %>%
 # apple_songs_artisttotals
 # apple_songs_eu_artisttotals - only in europe
 
+
+colnames(OSet_artists_genre) <- c("Artist", "Genre")
+
 artists_genre_comparison <- ww_artisttotals%>%
   inner_join(
     spotify_listeners,
@@ -107,6 +111,11 @@ artists_genre_comparison <- ww_artisttotals%>%
     apple_songs_artisttotals,
     by = "Artist",
     suffix = c(".ww", ".apple")
+  ) %>%
+  inner_join(
+    OSet_artists_genre,
+    by = "Artist",
+    suffix = c(".ww", ".genre")
   )
 
 # Test to see if the are no duplicate rows
@@ -139,12 +148,16 @@ artists_genre_comparison <- artists_genre_comparison %>%
   )
 
 
-# Sum column
+# Sum of all the listeners and views across all of the dsp column
 artists_genre_comparison <- artists_genre_comparison %>%
   mutate(
-    sum = Total.youtube + Total.ww + Total + PkListeners
+    Sum_listeners_views_across = Total.youtube + Total.ww + Total + PkListeners
   ) %>%
-  arrange(desc(sum))
+  arrange(desc(Sum_listeners_views_across))
 
+
+artists_genre_comparison %>%
+  select(Artist, Genre, Sum_listeners_views_across)
+# TODO VIZUALIZATION
 ```
 

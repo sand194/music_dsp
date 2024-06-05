@@ -34,4 +34,6 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 
 
 ## 4.06.2024
-- artists_genre_comparison
+- Utworzyłem `artist_genre_comparison`, czyli data frame łączący statystyki artystów ze wszystkich serwisów, do tego zsumowałem wszystkie statystyki dotyczące słuchaczy/wyświetleń do jednej kolumny `Sum_listeners_views_across`, a także przypisałem każdemu artyście odpowiedni (ogólny) gatunek
+- Czyszczenie kolumn w `artist_genre_comparison` i ich nazw
+- Problem: odpowiednie łączenie po kolei ramek danych za pomocą `join()`
