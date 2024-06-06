@@ -1,0 +1,207 @@
+---
+title: "R_project_main"
+author: "Jakub Piasek"
+date: "2024-05-27"
+output: html_document
+---
+
+
+```{r cache=FALSE, echo=FALSE, results=FALSE}
+library(tidyverse)
+library(lintr)
+library(ggthemes)
+
+# source("scraping.R", echo = F, local = knitr::knit_global())
+knitr::read_chunk('scraping.R')
+```
+
+<!--
+```{r scraping.R, eval=T}
+
+```
+-->
+
+<!--
+```{r, eval = F}
+knitr::read_chunk('data_export.R')
+source("data_export.R", echo = F, local = knitr::knit_global())
+```
+-->
+
+```{r}
+knitr::read_chunk('data_import.R')
+source("data_import.R", echo = F, local = knitr::knit_global())
+```
+
+
+Ilość rekordów we wszystkich ramkach danych
+
+```{r}
+total_rows <- ls() %>%
+  set_names() %>%
+  map(~ get(.)) %>%
+  keep(is.data.frame) %>%
+  map_int(nrow) %>%
+  sum()
+
+
+total_rows
+
+total_rows > 30000
+```
+
+# Czyszczenie danych
+
+### Usuwanie kolumny "Pos"
+Aby uniknąć duplikatów w kolumnach, należy usunąć kolumnę "Pos"
+
+```{r}
+source("cleaning.R", echo = F, local = knitr::knit_global())
+knitr::read_chunk('cleaning.R')
+```
+
+```{r cleaning.R, eval=T}
+
+```
+
+
+# TODO - sklasyfikować jakie gatunki są najchętniej słuchane (relacja: artysta - gatunek) pomiędzy wszystkimi platformami, użyć MusicOSet
+
+```{r}
+# Data frame containing metadata about artists
+OSet_artists <- import("clean_data/musicoset_metadata/artists.csv")
+
+# OSet_artists genre variables unification
+OSet_artists <- OSet_artists %>%
+  mutate(main_genre = case_when(
+    grepl("rap", main_genre) ~ "rap",
+    grepl("hip hop", main_genre) ~ "rap",
+    grepl("drill", main_genre) ~ "rap",
+    grepl("rock", main_genre) ~ "rock",
+    grepl("country", main_genre) ~ "country",
+    grepl("r&b", main_genre) ~ "r&b",
+    grepl("edm", main_genre) ~ "edm",
+    grepl("pop", main_genre) ~ "pop",
+    grepl("soul", main_genre) ~ "soul",
+    .default = as.character(main_genre)
+  ))
+
+OSet_artists_genre <- OSet_artists %>%
+  select(c("name", "main_genre"))
+
+```
+
+
+
+Przetwarzanie, aby uzyskać ramkę danych z najchętniej słuchanymi gatunkami i ramkę danych z najchętniej słuchanymi artystami ogólnie
+```{r}
+# eu_artisttotals - only in europe
+# eua_artisttotals - based on albums - only in europe
+# ww_artisttotals
+# spotify_listeners
+# youtube_archive
+# apple_songs_artisttotals
+# apple_songs_eu_artisttotals - only in europe
+
+
+colnames(OSet_artists_genre) <- c("Artist", "Genre")
+
+artists_genre_comparison <- ww_artisttotals%>%
+  inner_join(
+    spotify_listeners,
+    by = "Artist",
+    suffix = c(".ww", ".spotify")
+  ) %>%
+  inner_join(
+    youtube_archive,
+    by = "Artist",
+    suffix = c(".ww", ".youtube")
+  ) %>%
+  inner_join(
+    apple_songs_artisttotals,
+    by = "Artist",
+    suffix = c(".ww", ".apple")
+  ) %>%
+  inner_join(
+    OSet_artists_genre,
+    by = "Artist",
+    suffix = c(".ww", ".genre")
+  )
+
+# Test to see if the are no duplicate rows
+artists_genre_comparison %>%
+  filter(Artist == "Adele")
+
+
+# Column cleaning
+artists_genre_comparison$Total.youtube <- str_replace_all(artists_genre_comparison$Total.youtube, ",","")
+artists_genre_comparison$Total.ww <- str_replace_all(artists_genre_comparison$Total.ww, ",", "")
+artists_genre_comparison$PkListeners <- str_replace_all(artists_genre_comparison$PkListeners, ",", "")
+artists_genre_comparison$Total <- str_replace_all(artists_genre_comparison$Total, ",", "")
+artists_genre_comparison$Listeners <- str_replace_all(artists_genre_comparison$Listeners , ",", "")
+
+
+artists_genre_comparison <- artists_genre_comparison %>%
+  transform(
+    Total.youtube = as.numeric(Total.youtube),
+    Total.ww = as.numeric(Total.ww),
+    PkListeners = as.numeric(PkListeners),
+    Total = as.numeric(Total),
+    Listeners = as.numeric(Listeners)
+  ) %>%
+  mutate(
+    # Total.youtube column is equal to total views in millions
+    Total.youtube = as.numeric(Total.youtube) * 1000000
+  ) %>%
+  rename(Total.apple = Total, Total.spotify = PkListeners)
+
+
+# Sum of all the listeners and views across all of the dsp column
+artists_genre_comparison <- artists_genre_comparison %>%
+  mutate(
+    Sum_listeners_views_across = Total.youtube + Total.ww + Total.apple + Total.spotify
+  ) %>%
+  arrange(desc(Sum_listeners_views_across))
+
+```
+```{r}
+preferable_genres <- artists_genre_comparison %>%
+  select(Artist, Genre, Sum_listeners_views_across) %>%
+  group_by(Genre) %>%
+  count() %>%
+  arrange(desc(n))
+
+head(preferable_genres)
+
+```
+
+# Wizualizacja - które gatunki są najbardziej słuchane ogólnie
+```{r}
+ggplot(
+  head(preferable_genres),
+  aes(
+    x = reorder(Genre, -n),
+    y = n)
+) + geom_bar(
+  stat = "identity",
+  width = 0.5,
+  fill = "#581845"
+  ) + labs(
+    title = "Najchętniej słuchane gatunki"
+  ) + xlab(
+    ""
+    ) + ylab(
+      ""
+    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6")
+```
+
+# Wizualizacja - najchętniej słuchani artyści na wszystkich platformach
+```{r}
+# TODO
+# pogrupowac ramki wedlug liczb z poszczegolnych serwisow
+
+artists_genre_comparison %>%
+  select(Artist, Total.ww, Total.spotify, Total.youtube, Total.apple)
+
+```
+

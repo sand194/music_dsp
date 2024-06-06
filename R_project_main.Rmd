@@ -7,6 +7,11 @@ output: html_document
 
 
 ```{r cache=FALSE, echo=FALSE, results=FALSE}
+# Managing project dependencies
+library(packrat)
+packrat::unbundle("packrat/bundles/music_dsp-2024-06-06.tar.gz", "packrat")
+
+
 library(tidyverse)
 library(lintr)
 library(ggthemes)
