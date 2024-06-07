@@ -6,7 +6,22 @@ output: html_document
 ---
 
 
-```{r cache=FALSE, echo=FALSE, results=FALSE}
+### unix-only function to count lines of code across all files
+```{bash, engine.opts='-l'}
+local total_lines=0
+
+# find all .R and .Rmd files and count their lines
+for file in $(find . -type f \( -name "*.R" -o -name "*.Rmd" \)); do
+    local lines=$(wc -l < "$file")
+    total_lines=$((total_lines + lines))
+done
+
+echo "Total lines of code in .R and .Rmd files: $total_lines"
+```
+
+
+
+```{r cache=FALSE, echo=FALSE, results=FALSE, warning=FALSE}
 # Managing project dependencies
 library(packrat)
 # packrat::unbundle("packrat/bundles/music_dsp-2024-06-06.tar.gz", "packrat")
@@ -17,7 +32,7 @@ library(lintr)
 library(ggthemes)
 
 # source("scraping.R", echo = F, local = knitr::knit_global())
-knitr::read_chunk('scraping.R')
+# knitr::read_chunk('scraping.R')
 ```
 
 <!--
@@ -65,10 +80,11 @@ source("cleaning.R", echo = F, local = knitr::knit_global())
 knitr::read_chunk('cleaning.R')
 ```
 
+<!---
 ```{r cleaning.R, eval=T}
 
 ```
-
+--->
 
 # TODO - sklasyfikować jakie gatunki są najchętniej słuchane (relacja: artysta - gatunek) pomiędzy wszystkimi platformami, użyć MusicOSet
 
@@ -198,15 +214,102 @@ ggplot(
     ) + ylab(
       ""
     ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6")
+
 ```
 
+
 # Wizualizacja - najchętniej słuchani artyści na wszystkich platformach
+
+
+# Wizualizacja - najchętniej słuchani artyści na spotify - worldwide
 ```{r}
 # TODO
 # pogrupowac ramki wedlug liczb z poszczegolnych serwisow
 
-artists_genre_comparison %>%
-  select(Artist, Total.ww, Total.spotify, Total.youtube, Total.apple)
+top_artists_spotify <- artists_genre_comparison %>%
+  select(Artist, Sum_listeners_views_across) %>%
+  top_n(55, wt = Sum_listeners_views_across)
+
+# separate top artists for labeling
+top_labels <- top_artists_spotify %>%
+  top_n(18, wt = Sum_listeners_views_across)
+
+
+top_artists_spotify %>%
+  ggplot(
+    aes(x = Artist, y = Sum_listeners_views_across, size = log(Sum_listeners_views_across))) +
+    geom_point(alpha = 0.7) +
+    xlab("Artysta") +
+    ylab("Ilość streamów") +
+    scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
+    theme(
+      axis.text.x = element_blank(),
+      axis.text.y = element_blank(),
+      legend.position = "none"
+    ) +
+    geom_text(
+      data = top_labels,
+      # aes(label = Artist, size = log(Sum_listeners_views_across)),
+      aes(label = Artist),
+      vjust = 0.5, 
+      hjust = 0.5,
+      size = 2,
+      color = "red"
+    ) +
+    guides(size = guide_legend(override.aes = list(size = 5)))
+
+# TODO pokolorować ładnie ten wykres + zrobić go dla polski
 
 ```
+
+
+# Najchętniej słuchane gatunki na spotify - worldwide
+```{r}
+preferable_genres_spotify <- suppressWarnings({
+  spotify_artists %>%
+    mutate(across(c('Streams', 'Daily', 'As lead', 'Solo', 'As feature'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Streams', 'Daily', 'As lead', 'Solo', 'As feature'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".spotify", ".oset")
+    ) %>%
+    drop_na() %>% # dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Streams
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+
+head(preferable_genres_spotify)
+
+```
+
+
+```{r}
+ggplot(
+  head(preferable_genres_spotify),
+  aes(
+    x = reorder(Genre, -n),
+    y = n)
+) + geom_bar(
+  stat = "identity",
+  width = 0.5,
+  fill = "#581845"
+  ) + labs(
+    title = "Najchętniej słuchane gatunki na Spotify",
+    subtitle = "Globalnie"
+  ) + xlab(
+    ""
+    ) + ylab(
+      ""
+    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6") + theme(
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
+    )
+```
+
 
