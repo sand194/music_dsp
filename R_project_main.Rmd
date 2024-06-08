@@ -8,15 +8,32 @@ output: html_document
 
 ### unix-only function to count lines of code across all files
 ```{bash, engine.opts='-l'}
-local total_lines=0
+count_lines_of_code() {
+    local directory="$1"
+    local exclude_directory="$2"
+    local total_lines=0
 
-# find all .R and .Rmd files and count their lines
-for file in $(find . -type f \( -name "*.R" -o -name "*.Rmd" \)); do
-    local lines=$(wc -l < "$file")
-    total_lines=$((total_lines + lines))
-done
+    if [ -z "$directory" ]; then
+        echo "Please provide a directory."
+        return 1
+    fi
 
-echo "Total lines of code in .R and .Rmd files: $total_lines"
+    if [ -z "$exclude_directory" ]; then
+        echo "Please provide a directory to exclude."
+        return 1
+    fi
+
+    # Find all .R and .Rmd files in the specified directory excluding the exclude_directory and count their lines
+    for file in $(find "$directory" -path "$exclude_directory" -prune -o -type f \( -name "*.R" -o -name "*.Rmd" \) -print); do
+        local lines=$(wc -l < "$file")
+        total_lines=$((total_lines + lines))
+    done
+
+    echo "Total lines of code in .R and .Rmd files in $directory excluding $exclude_directory: $total_lines"
+}
+
+# Call the function with a specific directory and exclude directory
+count_lines_of_code "." "./packrat"
 ```
 
 
@@ -30,6 +47,8 @@ library(packrat)
 library(tidyverse)
 library(lintr)
 library(ggthemes)
+library(ggrepel)
+library(plotly)
 
 # source("scraping.R", echo = F, local = knitr::knit_global())
 # knitr::read_chunk('scraping.R')
@@ -223,44 +242,112 @@ ggplot(
 
 # Wizualizacja - najchętniej słuchani artyści na spotify - worldwide
 ```{r}
-# TODO
-# pogrupowac ramki wedlug liczb z poszczegolnych serwisow
+# TODO pogrupowac ramki wedlug liczb z poszczegolnych serwisow
 
 top_artists_spotify <- artists_genre_comparison %>%
   select(Artist, Sum_listeners_views_across) %>%
-  top_n(55, wt = Sum_listeners_views_across)
+  top_n(100, wt = Sum_listeners_views_across)
 
 # separate top artists for labeling
 top_labels <- top_artists_spotify %>%
-  top_n(18, wt = Sum_listeners_views_across)
+  top_n(20, wt = Sum_listeners_views_across)
+
+bot_labels <- top_artists_spotify %>%
+  top_n(-18, wt = Sum_listeners_views_across)
+
+mid_labels <- top_artists_spotify %>%
+  slice(21:(nrow(top_artists_spotify) - 18))
 
 
 top_artists_spotify %>%
   ggplot(
     aes(x = Artist, y = Sum_listeners_views_across, size = log(Sum_listeners_views_across))) +
-    geom_point(alpha = 0.7) +
+    geom_point(aes(alpha = Sum_listeners_views_across), color = "#7e7b77", fill = "#6cd980", shape = 21) +
     xlab("Artysta") +
     ylab("Ilość streamów") +
-    scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
+    scale_size(range = c(1, 20)) +
+    scale_alpha_continuous(range = c(0.3, 1)) +
+    scale_y_log10() +
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + 
     theme(
       axis.text.x = element_blank(),
       axis.text.y = element_blank(),
-      legend.position = "none"
+      legend.position = "none",
+      panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = element_line(color = "grey95", linewidth = 0.25)
     ) +
+    geom_text_repel(
+    data = top_labels,
+    aes(label = Artist),
+    size = 2.5,
+    color = "#1b2322",
+    ) + 
+    geom_text_repel(
+      data = mid_labels,
+      aes(label = Artist),
+      size = 1.2,
+      color = "#1b2322"
+   ) +
     geom_text(
-      data = top_labels,
-      # aes(label = Artist, size = log(Sum_listeners_views_across)),
+      data = bot_labels,
       aes(label = Artist),
       vjust = 0.5, 
       hjust = 0.5,
-      size = 2,
-      color = "red"
-    ) +
-    guides(size = guide_legend(override.aes = list(size = 5)))
+      size = 1,
+      color = "#1b2322"
+   ) 
 
-# TODO pokolorować ładnie ten wykres + zrobić go dla polski
+# TODO zrobić go dla polski
 
 ```
+
+```{r}
+ggplotly(top_artists_spotify %>%
+  ggplot(aes(x = Artist, y = Sum_listeners_views_across, size = log(Sum_listeners_views_across))) +
+  geom_point(aes(alpha = Sum_listeners_views_across), color = "#7e7b77", fill = "#6cd980", shape = 21) +
+  xlab("Artysta") +
+  ylab("Ilość streamów") +
+  scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
+  scale_alpha_continuous(range = c(0.3, 1)) +
+  scale_y_log10() +
+  theme_fivethirtyeight() + 
+  scale_fill_fivethirtyeight() + 
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    legend.position = "none",
+    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey95", linewidth = 0.25)
+  ) +
+  geom_text(
+    data = top_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2.5,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = mid_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = bot_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 1,
+    color = "#1b2322"
+  ) 
+)
+
+
+```
+
 
 
 # Najchętniej słuchane gatunki na spotify - worldwide
@@ -311,5 +398,3 @@ ggplot(
       plot.subtitle = element_text(size = 10)
     )
 ```
-
-

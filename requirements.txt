@@ -2,4 +2,6 @@
 "lintr",
 "rvest",
 "rio",
-"ggthemes"
+"ggthemes",
+"plotly",
+"ggrepel"
