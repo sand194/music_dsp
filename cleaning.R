@@ -12,8 +12,7 @@ replace_global <- function(data_frame_list, dfs_affected_list){
   
     for (j in 1:length(dfs_affected_list)){
       
-      if (dfs_affected_list[j] == names(data_frame_list[i])){
-        # rm(list = dfs_affected_list[j]) # Deleting old data frame from Global Environment - turns out it is not necessary
+      if (!is.null(dfs_affected_list[j]) == names(data_frame_list[i])){
         
         assign(dfs_affected_list[j], data_frame_list[[i]], envir = .GlobalEnv)
       }
@@ -21,6 +20,7 @@ replace_global <- function(data_frame_list, dfs_affected_list){
   }
   
 }
+
 
 
 
@@ -34,7 +34,7 @@ for (i in 1:length(data_frames)){
   
   if (grepl("Pos", colnames(current_df[1])) || colnames(current_df[1]) == ""){
    
-    current_df <- current_df[-1] #%>%
+    current_df <- current_df[-1]
    
     dfs_affected <- append(dfs_affected, names(data_frames[i]))
     

@@ -5,7 +5,6 @@ date: "2024-05-27"
 output: html_document
 ---
 
-<!---
 ### unix-only function to count lines of code across all files
 ```{bash, engine.opts='-l'}
 count_lines_of_code() {
@@ -35,7 +34,6 @@ count_lines_of_code() {
 # Call the function with a specific directory and exclude directory
 count_lines_of_code "." "./packrat"
 ```
---->
 
 
 ```{r cache=FALSE, echo=FALSE, results=FALSE, warning=FALSE}
@@ -68,8 +66,8 @@ source("data_export.R", echo = F, local = knitr::knit_global())
 -->
 
 ```{r}
-knitr::read_chunk('data_import.R')
 source("data_import.R", echo = F, local = knitr::knit_global())
+knitr::read_chunk('data_import.R')
 ```
 
 
@@ -96,7 +94,7 @@ Aby uniknąć duplikatów w kolumnach, należy usunąć kolumnę "Pos"
 
 ```{r}
 source("cleaning.R", echo = F, local = knitr::knit_global())
-knitr::read_chunk('cleaning.R')
+# knitr::read_chunk('cleaning.R') # w ostatecznym knicie zostawić tylko read_chunk
 ```
 
 <!---
@@ -232,7 +230,7 @@ ggplot(
     ""
     ) + ylab(
       ""
-    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6")
+    ) + theme_fivethirtyeight() + scale_fill_fivethirtyeight()
 
 ```
 
@@ -394,7 +392,8 @@ ggplot(
     ""
     ) + ylab(
       ""
-    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6") + theme(
+    ) +
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + theme(
       plot.title = element_text(size = 13),
       plot.subtitle = element_text(size = 10)
     )
@@ -731,7 +730,8 @@ ggplot(
     ""
     ) + ylab(
       ""
-    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6") + theme(
+    ) + 
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + theme(
       plot.title = element_text(size = 13),
       plot.subtitle = element_text(size = 10)
     )
