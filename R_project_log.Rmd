@@ -44,4 +44,6 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 - Wizualizacja najchętniej słuchanych gatunków na wszystkich platformach
 
 ## 07.06.2024
-- wizualizacja top artystów spotify - bubble plot
+- funkcja tworząca wykresy, dostosowane do moich ramek danych
+- wizualizacja top artystów i gatunków na wszystkich platformach - bubble plot
+- interaktywna wizualizacja poprzez plotly
