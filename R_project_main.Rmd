@@ -5,7 +5,7 @@ date: "2024-05-27"
 output: html_document
 ---
 
-
+<!---
 ### unix-only function to count lines of code across all files
 ```{bash, engine.opts='-l'}
 count_lines_of_code() {
@@ -35,13 +35,13 @@ count_lines_of_code() {
 # Call the function with a specific directory and exclude directory
 count_lines_of_code "." "./packrat"
 ```
-
+--->
 
 
 ```{r cache=FALSE, echo=FALSE, results=FALSE, warning=FALSE}
 # Managing project dependencies
 library(packrat)
-# packrat::unbundle("packrat/bundles/music_dsp-2024-06-06.tar.gz", "packrat")
+# packrat::unbundle("packrat/bundles/music_dsp-2024-06-08.tar.gz", "packrat")
 
 
 library(tidyverse)
@@ -227,7 +227,7 @@ ggplot(
   width = 0.5,
   fill = "#581845"
   ) + labs(
-    title = "Najchętniej słuchane gatunki"
+    title = "Najczęciej słuchane gatunki"
   ) + xlab(
     ""
     ) + ylab(
@@ -237,32 +237,34 @@ ggplot(
 ```
 
 
-# Wizualizacja - najchętniej słuchani artyści na wszystkich platformach
-
-
-# Wizualizacja - najchętniej słuchani artyści na spotify - worldwide
+# Wizualizacja - najchętniej słuchani artyści na wszystkich platformach - summarized
 ```{r}
-# TODO pogrupowac ramki wedlug liczb z poszczegolnych serwisow
 
-top_artists_spotify <- artists_genre_comparison %>%
+top_artists_total <- artists_genre_comparison %>%
   select(Artist, Sum_listeners_views_across) %>%
   top_n(100, wt = Sum_listeners_views_across)
 
 # separate top artists for labeling
-top_labels <- top_artists_spotify %>%
+top_labels <- top_artists_total %>%
   top_n(20, wt = Sum_listeners_views_across)
 
-bot_labels <- top_artists_spotify %>%
+bot_labels <- top_artists_total %>%
   top_n(-18, wt = Sum_listeners_views_across)
 
-mid_labels <- top_artists_spotify %>%
-  slice(21:(nrow(top_artists_spotify) - 18))
+mid_labels <- top_artists_total %>%
+  slice(21:(nrow(top_artists_total) - 18))
 
+```
 
-top_artists_spotify %>%
+```{r}
+top_artists_total %>%
   ggplot(
     aes(x = Artist, y = Sum_listeners_views_across, size = log(Sum_listeners_views_across))) +
-    geom_point(aes(alpha = Sum_listeners_views_across), color = "#7e7b77", fill = "#6cd980", shape = 21) +
+    geom_point(aes(alpha = Sum_listeners_views_across), color = "#7e7b77", fill = "#edc491", shape = 21) +
+    labs(
+      title = "Najczęściej streamowani artyści",
+      subtitle = "Globalnie - sumaryzacja"
+    ) +
     xlab("Artysta") +
     ylab("Ilość streamów") +
     scale_size(range = c(1, 20)) +
@@ -274,39 +276,37 @@ top_artists_spotify %>%
       axis.text.y = element_blank(),
       legend.position = "none",
       panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
-      panel.grid.minor = element_line(color = "grey95", linewidth = 0.25)
+      panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
     ) +
-    geom_text_repel(
-    data = top_labels,
-    aes(label = Artist),
-    size = 2.5,
-    color = "#1b2322",
-    ) + 
-    geom_text_repel(
-      data = mid_labels,
-      aes(label = Artist),
-      size = 1.2,
-      color = "#1b2322"
-   ) +
     geom_text(
-      data = bot_labels,
+      data = top_labels,
       aes(label = Artist),
       vjust = 0.5, 
       hjust = 0.5,
-      size = 1,
+      size = 2.5,
       color = "#1b2322"
-   ) 
+    )
+    
+
+# TODO zrepelować tylko te labely które trzeba
 
 # TODO zrobić go dla polski
 
 ```
 
+# Wersja interactive
 ```{r}
-ggplotly(top_artists_spotify %>%
+ggplotly(top_artists_total %>%
   ggplot(aes(x = Artist, y = Sum_listeners_views_across, size = log(Sum_listeners_views_across))) +
-  geom_point(aes(alpha = Sum_listeners_views_across), color = "#7e7b77", fill = "#6cd980", shape = 21) +
+  geom_point(aes(alpha = Sum_listeners_views_across), color = "#7e7b77", fill = "#edc491", shape = 21) +
   xlab("Artysta") +
   ylab("Ilość streamów") +
+  labs(
+    title = "Najczęściej streamowani artyści",
+    subtitle = "Globalnie - wersja interaktywna"
+  ) +
   scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
   scale_alpha_continuous(range = c(0.3, 1)) +
   scale_y_log10() +
@@ -317,7 +317,9 @@ ggplotly(top_artists_spotify %>%
     axis.text.y = element_blank(),
     legend.position = "none",
     panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
-    panel.grid.minor = element_line(color = "grey95", linewidth = 0.25)
+    panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+    plot.title = element_text(size = 13),
+    plot.subtitle = element_text(size = 10)
   ) +
   geom_text(
     data = top_labels,
@@ -347,7 +349,6 @@ ggplotly(top_artists_spotify %>%
 
 
 ```
-
 
 
 # Najchętniej słuchane gatunki na spotify - worldwide
@@ -385,9 +386,9 @@ ggplot(
 ) + geom_bar(
   stat = "identity",
   width = 0.5,
-  fill = "#581845"
+  fill = "#6cd980"
   ) + labs(
-    title = "Najchętniej słuchane gatunki na Spotify",
+    title = "Najczęściej słuchane gatunki na Spotify",
     subtitle = "Globalnie"
   ) + xlab(
     ""
@@ -397,4 +398,454 @@ ggplot(
       plot.title = element_text(size = 13),
       plot.subtitle = element_text(size = 10)
     )
+
+```
+
+
+# Wizualizacja - najchętniej słuchani artyści na spotify - worldwide - summarized
+```{r}
+# TODO pogrupowac ramki wedlug liczb z poszczegolnych serwisow
+
+top_artists_spotify <- artists_genre_comparison %>%
+  select(Artist, Total.spotify) %>%
+  top_n(100, wt = Total.spotify)
+
+# separate top artists for labeling
+top_labels <- top_artists_spotify %>%
+  top_n(20, wt = Total.spotify)
+
+bot_labels <- top_artists_spotify %>%
+  top_n(-18, wt = Total.spotify)
+
+mid_labels <- top_artists_spotify %>%
+  slice(21:(nrow(top_artists_spotify) - 18))
+
+```
+
+```{r}
+top_artists_spotify %>%
+  ggplot(
+    aes(x = Artist, y = Total.spotify, size = log(Total.spotify))) +
+    geom_point(aes(alpha = Total.spotify), color = "#7e7b77", fill = "#6cd980", shape = 21) +
+    labs(
+      title = "Najczęściej streamowani artyści na Spotify",
+      subtitle = "Globalnie - sumaryzacja"
+    ) +
+    xlab("Artysta") +
+    ylab("Ilość streamów") +
+    scale_size(range = c(1, 20)) +
+    scale_alpha_continuous(range = c(0.3, 1)) +
+    scale_y_log10() +
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + 
+    theme(
+      axis.text.x = element_blank(),
+      axis.text.y = element_blank(),
+      legend.position = "none",
+      panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
+    ) +
+    geom_text(
+      data = top_labels,
+      aes(label = Artist),
+      vjust = 0.5, 
+      hjust = 0.5,
+      size = 2.5,
+      color = "#1b2322"
+    )
+    
+
+# TODO zrepelować tylko te labely które trzeba
+
+# TODO zrobić go dla polski
+
+```
+
+# Wersja interactive
+```{r}
+ggplotly(top_artists_spotify %>%
+  ggplot(aes(x = Artist, y = Total.spotify, size = log(Total.spotify))) +
+  geom_point(aes(alpha = Total.spotify), color = "#7e7b77", fill = "#6cd980", shape = 21) +
+  xlab("Artysta") +
+  ylab("Ilość streamów") +
+  labs(
+    title = "Najczęściej streamowani artyści na Spotify",
+    subtitle = "Globalnie - wersja interaktywna"
+  ) +
+  scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
+  scale_alpha_continuous(range = c(0.3, 1)) +
+  scale_y_log10() +
+  theme_fivethirtyeight() + 
+  scale_fill_fivethirtyeight() + 
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    legend.position = "none",
+    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+    plot.title = element_text(size = 13),
+    plot.subtitle = element_text(size = 10)
+  ) +
+  geom_text(
+    data = top_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2.5,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = mid_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = bot_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 1,
+    color = "#1b2322"
+  ) 
+)
+
+
+```
+
+# Wizualizacja - najchętniej słuchani artyści na spotify - w polsce - summarized
+
+
+
+
+
+# Najczęściej słuchane gatunki - Apple Music - worldwide
+```{r}
+preferable_genres_apple <- suppressWarnings({
+  apple_songs_artisttotals %>%
+    mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Total', 'Today'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".apple", ".oset")
+    ) %>%
+    drop_na() %>% # dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Total
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+preferable_genres_apple <- preferable_genres_apple[-6,] # removing empty row
+
+head(preferable_genres_apple)
+
+```
+
+```{r}
+ggplot(
+  head(preferable_genres_apple),
+  aes(
+    x = reorder(Genre, -n),
+    y = n)
+) + geom_bar(
+  stat = "identity",
+  width = 0.5,
+  fill = "#fa2a44"
+  ) + labs(
+    title = "Najczęściej słuchane gatunki na Apple Music",
+    subtitle = "Globalnie"
+  ) + xlab(
+    ""
+    ) + ylab(
+      ""
+    ) +
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + 
+    theme(
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
+    )
+
+```
+
+# Wizualizacja - najchętniej słuchani artyści na Apple Music - worldwide - summarized
+```{r}
+top_artists_apple <- artists_genre_comparison %>%
+  select(Artist, Total.apple) %>%
+  top_n(100, wt = Total.apple)
+
+# separate top artists for labeling
+top_labels <- top_artists_apple %>%
+  top_n(20, wt = Total.apple)
+
+bot_labels <- top_artists_apple %>%
+  top_n(-18, wt = Total.apple)
+
+mid_labels <- top_artists_apple %>%
+  slice(21:(nrow(top_artists_apple) - 18))
+
+```
+
+```{r}
+top_artists_apple %>%
+  ggplot(
+    aes(x = Artist, y = Total.apple, size = log(Total.apple))) +
+    geom_point(aes(alpha = Total.apple), color = "#7e7b77", fill = "#e04a5d", shape = 21) +
+    labs(
+      title = "Najczęściej streamowani artyści na Apple Music",
+      subtitle = "Globalnie - sumaryzacja"
+    ) +
+    xlab("Artysta") +
+    ylab("Ilość streamów") +
+    scale_size(range = c(1, 20)) +
+    scale_alpha_continuous(range = c(0.3, 1)) +
+    scale_y_log10() +
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + 
+    theme(
+      axis.text.x = element_blank(),
+      axis.text.y = element_blank(),
+      legend.position = "none",
+      panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
+    ) +
+    geom_text(
+      data = top_labels,
+      aes(label = Artist),
+      vjust = 0.5, 
+      hjust = 0.5,
+      size = 2.5,
+      color = "#1b2322"
+    )
+    
+
+# TODO zrepelować tylko te labely które trzeba
+
+# TODO zrobić go dla polski
+
+```
+
+# Wersja interactive
+```{r}
+ggplotly(top_artists_apple %>%
+  ggplot(aes(x = Artist, y = Total.apple, size = log(Total.apple))) +
+  geom_point(aes(alpha = Total.apple), color = "#7e7b77", fill = "#e04a5d", shape = 21) +
+  xlab("Artysta") +
+  ylab("Ilość streamów") +
+  labs(
+    title = "Najczęściej streamowani artyści na Apple Music",
+    subtitle = "Globalnie - wersja interaktywna"
+  ) +
+  scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
+  scale_alpha_continuous(range = c(0.3, 1)) +
+  scale_y_log10() +
+  theme_fivethirtyeight() + 
+  scale_fill_fivethirtyeight() + 
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    legend.position = "none",
+    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+    plot.title = element_text(size = 13),
+    plot.subtitle = element_text(size = 10)
+  ) +
+  geom_text(
+    data = top_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2.5,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = mid_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = bot_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 1,
+    color = "#1b2322"
+  ) 
+)
+
+
+```
+
+
+
+
+# Najczęściej słuchane gatunki - YouTube - worldwide
+```{r}
+preferable_genres_yt <- suppressWarnings({
+  youtube_archive %>%
+    mutate(across(c('Total', '100M'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Total', '100M'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".youtube", ".oset")
+    ) %>%
+    drop_na() %>% # dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Total
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+
+head(preferable_genres_yt)
+
+```
+
+```{r}
+ggplot(
+  head(preferable_genres_yt),
+  aes(
+    x = reorder(Genre, -n),
+    y = n)
+) + geom_bar(
+  stat = "identity",
+  width = 0.5,
+  fill = "#db0000"
+  ) + labs(
+    title = "Najczęściej słuchane gatunki na YouTube",
+    subtitle = "Globalnie"
+  ) + xlab(
+    ""
+    ) + ylab(
+      ""
+    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6") + theme(
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
+    )
+
+```
+
+# Wizualizacja - najchętniej słuchani artyści na YouTube - worldwide - summarized
+```{r}
+top_artists_yt <- artists_genre_comparison %>%
+  select(Artist, Total.youtube) %>%
+  top_n(100, wt = Total.youtube)
+
+# separate top artists for labeling
+top_labels <- top_artists_yt %>%
+  top_n(20, wt = Total.youtube)
+
+bot_labels <- top_artists_yt %>%
+  top_n(-18, wt = Total.youtube)
+
+mid_labels <- top_artists_yt %>%
+  slice(21:(nrow(top_artists_yt) - 18))
+
+```
+
+```{r}
+top_artists_yt %>%
+  ggplot(
+    aes(x = Artist, y = Total.youtube , size = log(Total.youtube))) +
+    geom_point(aes(alpha = Total.youtube), color = "#7e7b77", fill = "#deb3b1", shape = 21) +
+    labs(
+      title = "Najczęściej streamowani artyści na YouTube",
+      subtitle = "Globalnie - sumaryzacja"
+    ) +
+    xlab("Artysta") +
+    ylab("Ilość streamów") +
+    scale_size(range = c(1, 20)) +
+    scale_alpha_continuous(range = c(0.3, 1)) +
+    scale_y_log10() +
+    theme_fivethirtyeight() + scale_fill_fivethirtyeight() + 
+    theme(
+      axis.text.x = element_blank(),
+      axis.text.y = element_blank(),
+      legend.position = "none",
+      panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+      plot.title = element_text(size = 13),
+      plot.subtitle = element_text(size = 10)
+    ) +
+    geom_text(
+      data = top_labels,
+      aes(label = Artist),
+      vjust = 0.5, 
+      hjust = 0.5,
+      size = 2.5,
+      color = "#1b2322"
+    )
+    
+
+# TODO zrepelować tylko te labely które trzeba
+
+# TODO zrobić go dla polski
+
+```
+
+# Wersja interactive
+```{r}
+ggplotly(top_artists_yt %>%
+  ggplot(aes(x = Artist, y = Total.youtube, size = log(Total.youtube))) +
+  geom_point(aes(alpha = Total.youtube), color = "#7e7b77", fill = "#deb3b1", shape = 21) +
+  xlab("Artysta") +
+  ylab("Ilość streamów") +
+  labs(
+    title = "Najczęściej streamowani artyści na YouTube",
+    subtitle = "Globalnie - wersja interaktywna"
+  ) +
+  scale_size(range = c(3, 15), name = "Sum of Listeners/Views") +
+  scale_alpha_continuous(range = c(0.3, 1)) +
+  scale_y_log10() +
+  theme_fivethirtyeight() + 
+  scale_fill_fivethirtyeight() + 
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    legend.position = "none",
+    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey95", linewidth = 0.25),
+    plot.title = element_text(size = 13),
+    plot.subtitle = element_text(size = 10)
+  ) +
+  geom_text(
+    data = top_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2.5,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = mid_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 2,
+    color = "#1b2322"
+  ) +
+  geom_text(
+    data = bot_labels,
+    aes(label = Artist),
+    vjust = 0.5, 
+    hjust = 0.5,
+    size = 1,
+    color = "#1b2322"
+  ) 
+)
+
+
 ```
