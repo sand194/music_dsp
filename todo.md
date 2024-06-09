@@ -42,3 +42,4 @@
 - Który serwis do kogo trafi najlepiej (poprzez rekomendacje itd.)
 - porównać koszt każdego z nich
 - napisać jak duże są userbasy każdego z nich
+- różnica pomiędzy iTunes a Apple Music

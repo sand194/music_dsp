@@ -4,4 +4,8 @@
 "rio",
 "ggthemes",
 "plotly",
-"ggrepel"
+"ggrepel",
+"fuzzyjoin",
+"flextable",
+"magittr",
+"webshot"

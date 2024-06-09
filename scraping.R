@@ -84,3 +84,9 @@ for (i in 1:length(url_list)){
   
 }
 
+
+
+# Spotify most streamed songs from Wikipedia
+tables <- page %>% html_nodes(".wikitable")
+most_streamed_songs_table <- tables[[1]]
+spotify_most_streamed_songs <- most_streamed_songs_table %>% html_table(fill = TRUE)

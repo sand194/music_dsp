@@ -43,7 +43,10 @@ knitr::opts_chunk$set("~/ds/studia/sem2/r/r_project")
 - Problem: poprawna kolejność pipelinu oraz pozbycie się ".csv" z nazw importowanych zmiennych
 - Wizualizacja najchętniej słuchanych gatunków na wszystkich platformach
 
-## 07.06.2024
+## 08.06.2024
 - funkcja tworząca wykresy, dostosowane do moich ramek danych
 - wizualizacja top artystów i gatunków na wszystkich platformach - bubble plot
 - interaktywna wizualizacja poprzez plotly
+
+## 09.06.2024
+- wizualizacja + porównania top piosenek ze wszystkich platform

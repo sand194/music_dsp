@@ -47,6 +47,9 @@ library(lintr)
 library(ggthemes)
 library(ggrepel)
 library(plotly)
+library(fuzzyjoin)
+library(flextable)
+library(webshot)
 
 # source("scraping.R", echo = F, local = knitr::knit_global())
 # knitr::read_chunk('scraping.R')
@@ -108,6 +111,34 @@ source("cleaning.R", echo = F, local = knitr::knit_global())
 source("plots.R", echo = F, local = knitr::knit_global())
 ```
 
+```{r}
+library(magrittr)
+
+set_flextable_defaults(
+  font.size = 10, theme_fun = theme_vanilla,
+  padding = 6,
+  background.color = "#EFEFEF")
+
+theme_design <- function(x) {
+  x <- border_remove(x)
+  std_border <- fp_border_default(width = 4, color = "white")
+  x <- fontsize(x, size = 10, part = "all")
+  x <- font(x, fontname = "Courier", part = "all")
+  x <- align(x, align = "center", part = "all")
+  x <- bold(x, bold = TRUE, part = "all")
+  x <- bg(x, bg = "#475f77", part = "body")
+  x <- bg(x, bg = "#eb5555", part = "header")
+  x <- bg(x, bg = "#1bbbda", part = "footer")
+  x <- color(x, color = "white", part = "all")
+  x <- padding(x, padding = 6, part = "all")
+  x <- border_outer(x, part="all", border = std_border )
+  x <- border_inner_h(x, border = std_border, part="all")
+  x <- border_inner_v(x, border = std_border, part="all")
+  x <- set_table_properties(x, layout = "fixed")
+  x
+}
+
+```
 
 
 ```{r}
@@ -138,15 +169,6 @@ OSet_artists_genre <- OSet_artists %>%
 
 Przetwarzanie, aby uzyskać ramkę danych z najchętniej słuchanymi gatunkami i ramkę danych z najchętniej słuchanymi artystami ogólnie
 ```{r}
-# eu_artisttotals - only in europe
-# eua_artisttotals - based on albums - only in europe
-# ww_artisttotals
-# spotify_listeners
-# youtube_archive
-# apple_songs_artisttotals
-# apple_songs_eu_artisttotals - only in europe
-
-
 colnames(OSet_artists_genre) <- c("Artist", "Genre")
 
 artists_genre_comparison <- ww_artisttotals%>%
@@ -216,12 +238,18 @@ preferable_genres <- artists_genre_comparison %>%
 
 head(preferable_genres)
 
+
+preferable_genres_flex <- flextable(preferable_genres) %>% theme_design()
+
+flextable(head(preferable_genres)) %>% theme_design()
+
+
 ```
 
 
 # Wizualizacja - które gatunki są najczęściej słuchane ogólnie
 ```{r}
-b_plot(preferable_genres, "#581845", "Najczęciej słuchane gatunki", "plot_top_genres")
+bar_plot(preferable_genres, "#581845", "Najczęciej słuchane gatunki", "plot_top_genres")
 
 ```
 
@@ -258,11 +286,17 @@ preferable_genres_spotify <- suppressWarnings({
 
 head(preferable_genres_spotify)
 
+
+preferable_genres_spotify_flex <- flextable(preferable_genres_spotify) %>% add_header_lines("Spotify") %>% theme_design()
+
+flextable(head(preferable_genres_spotify)) %>% add_header_lines("Spotify") %>% theme_design()
+
+
 ```
 
 
 ```{r}
-b_plot(preferable_genres_spotify, "#6cd980", "Najczęściej słuchane gatunki na Spotify", "plot_top_genres_spotify")
+bar_plot(preferable_genres_spotify, "#6cd980", "Najczęściej słuchane gatunki na Spotify", "plot_top_genres_spotify")
 
 ```
 
@@ -274,7 +308,7 @@ bubble_plots(artists_genre_comparison, Total.spotify, "#6cd980", "Najczęściej 
 
 ```
 
-# Wizualizacja - najchętniej słuchani artyści na spotify - w polsce - summarized
+# TODO Wizualizacja - najchętniej słuchani artyści na spotify - w polsce - summarized
 
 
 
@@ -302,12 +336,15 @@ preferable_genres_apple <- suppressWarnings({
 
 preferable_genres_apple <- preferable_genres_apple[-6,] # removing empty row
 
-head(preferable_genres_apple)
+
+preferable_genres_apple_flex <- flextable(preferable_genres_apple) %>% add_header_lines("Apple Music") %>% theme_design()
+
+flextable(head(preferable_genres_apple)) %>% add_header_lines("Apple Music") %>% theme_design()
 
 ```
 
 ```{r}
-bar_plot(preferable_genres, "#fa2a44", "Najczęściej słuchane gatunki na Apple Music", "plot_top_genres_apple")
+bar_plot(preferable_genres_apple, "#fa2a44", "Najczęściej słuchane gatunki na Apple Music", "plot_top_genres_apple")
 
 ```
 
@@ -341,7 +378,9 @@ preferable_genres_yt <- suppressWarnings({
 })
 
 
-head(preferable_genres_yt)
+preferable_genres_yt_flex <- flextable(preferable_genres_yt) %>% add_header_lines("YouTube") %>% theme_design()
+
+flextable(head(preferable_genres_yt)) %>% add_header_lines("YouTube") %>% theme_design()
 
 ```
 
@@ -357,4 +396,183 @@ bubble_plots(artists_genre_comparison, Total.youtube, "#deb3b1", "Najczęściej 
 ```
 
 
-# TODO ZROBIĆ JESZCZE DLA PIOSENEK OSOBNE WIZUALIZACJE (dla wszystkich 4 typów platform) I PORÓWNANIA
+
+# Najczęściej słuchane gatunki - iTunes - worldwide
+```{r}
+preferable_genres_itunes <- suppressWarnings({
+  ww_artisttotals %>%
+    mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Total', 'Today'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".ww", ".oset")
+    ) %>%
+    drop_na() %>% # dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Total
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+preferable_genres_itunes <- preferable_genres_itunes[-5,] # removing empty genre row
+
+preferable_genres_itunes_flex <- flextable(preferable_genres_itunes) %>% add_header_lines("iTunes") %>% theme_design()
+
+flextable(head(preferable_genres_itunes)) %>% add_header_lines("iTunes") %>% theme_design()
+
+```
+
+# Wizualizacja - najchętniej słuchani artyści na iTunes - worldwide - summarized
+```{r}
+bar_plot(preferable_genres_itunes, "#649fe8", "Najczęściej słuchane gatunki na iTunes", "plot_top_genres_itunes")
+
+```
+
+```{r}
+bubble_plots(artists_genre_comparison, Total.ww, "#649fe8", "Najczęściej streamowani artyści na iTunes", "plot_top_artists_itunes")
+
+```
+
+
+
+
+# TODO ZROBIĆ JESZCZE DLA PIOSENEK OSOBNE WIZUALIZACJE (dla wszystkich 4 platform) I PORÓWNANIA
+```{r, warning=FALSE}
+# Top songs df cleaning
+ww_totals <- ww_totals %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(
+    Total = as.numeric(Total),
+    Today = as.numeric(Today)
+  ) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+apple_songs_totals <- apple_songs_totals %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(
+    Total = as.numeric(Total),
+    Today = as.numeric(Today)
+  ) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+spotify_most_streamed_songs <- spotify_most_streamed_songs %>%
+  mutate_all(~ gsub('"', '', .)) %>%
+  rename(Total = 'Streams(billions)') %>%
+  mutate(Total = as.numeric(Total) * 1000000000) %>%
+  drop_na() %>% # dropping rows that were not matched
+  mutate('Artist and Title' = paste(`Artist(s)`, Song, sep = " - ")) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+# Vector of substrings to remove
+substrings_to_remove <- c("Official.*", "M/V", "MV", "Video")
+# Create a regex pattern from the vector of substrings
+pattern <- str_c(substrings_to_remove, collapse = "|")
+
+youtube_topvideos <- youtube_topvideos %>%
+  mutate(across(c("Views", "Yesterday"), ~ gsub('\\,', '', .))) %>%
+  mutate(across(c('Views', 'Yesterday'), ~ str_replace(., ",", ""))) %>%
+  mutate(across(c('Views'), ~ str_replace(., ',', ""))) %>%
+  mutate(
+    Views = as.numeric(Views),
+    Yesterday = as.numeric(Yesterday)
+  ) %>%
+  rename('Artist and Title' = Video) %>%
+  rename(Total = Views) %>%
+  mutate(`Artist and Title` = str_replace(`Artist and Title`, "\\(.*\\)", "")) %>%
+  mutate(`Artist and Title` = str_replace(`Artist and Title`, "\\[.*\\]", "")) %>%
+  mutate(`Artist and Title` = str_remove_all(`Artist and Title`, pattern)) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+```
+
+
+```{r}
+ww_totals_flex <- flextable(ww_totals) %>% add_header_lines("iTunes") %>% theme_design()
+apple_songs_totals_flex <- flextable(apple_songs_totals) %>% add_header_lines("Apple Music") %>% theme_design()
+spotify_most_streamed_songs_flex <- flextable(spotify_most_streamed_songs) %>% add_header_lines("Spotify") %>% theme_design()
+youtube_topvideos_flex <- flextable(youtube_topvideos) %>% add_header_lines("YouTube") %>% theme_design()
+
+
+ww_totals_flex
+apple_songs_totals_flex
+spotify_most_streamed_songs_flex
+youtube_topvideos_flex
+```
+
+
+
+# Ile jest podobnych a ile różnych
+```{r, warning=FALSE,message=FALSE,error=FALSE, results='hide'}
+top_songs_total <- bind_rows(spotify_most_streamed_songs %>% top_n(50), ww_totals %>% top_n(50), apple_songs_totals %>% top_n(50), youtube_topvideos %>% top_n(50))
+
+top_songs_total_scatter <- top_songs_total %>%
+  group_by(`Artist and Title`) %>%
+  mutate(is_duplicate = n() > 1) %>%
+  ungroup()
+
+count_data <- top_songs_total_scatter %>%
+  summarise(count_true = sum(is_duplicate),
+            count_false = sum(!is_duplicate))
+
+top_songs_total_bar <- data.frame(
+  Duplicate = c("Same", "Different"),
+  Count = c(count_data$count_true, count_data$count_false)
+)
+
+
+top_songs_differences_bar_plot <- top_songs_total_bar %>% ggplot(
+  aes(
+    x = Duplicate,
+    y = Count,
+    fill = Duplicate
+    )
+  ) + geom_bar(
+    stat = "identity",
+    width = 0.5,
+    ) + labs(
+      title = "Różnice w top 100 piosenek z każdego serwisu",
+    ) + xlab(
+      ""
+      ) + ylab(
+        ""
+      ) + theme_fivethirtyeight() + scale_fill_fivethirtyeight() + theme(
+        plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 10),
+        legend.position = "none"
+     ) + 
+    scale_fill_manual(values = c("Same" = "#d13e2e", "Different" = "#2e85d1"))
+
+
+top_songs_differences_scatter_plot <- top_songs_total_scatter %>% ggplot(aes(x = `Artist and Title`, y = Total, color = is_duplicate)) +
+  geom_point(size = 3) +
+  labs(
+      title = "Różnice w top 100 piosenek z każdego serwisu"
+    ) + xlab(
+      "Ilość streamów"
+      ) + ylab(
+        ""
+      ) + theme_fivethirtyeight() + scale_fill_fivethirtyeight() + theme(
+        plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 10),
+        legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+        panel.grid.minor = element_line(color = "grey95", linewidth = 0.25)
+     ) + 
+  scale_color_manual(values = c("TRUE" = "#d13e2e", "FALSE" = "#2e85d1"))
+
+
+
+top_songs_differences_bar_plot
+top_songs_differences_scatter_plot
+```

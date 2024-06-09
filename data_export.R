@@ -36,3 +36,7 @@ for (i in 1:length(data_frames_names)) {
 
 # Saving url_list to csv
 export(as.data.frame(url_list), "url_list.csv", col.names = F)
+
+
+# Saving spotify_most_streamed_songs to csv
+export(spotify_most_streamed_songs, "raw_data/spotify_most_streamed_songs.csv")
