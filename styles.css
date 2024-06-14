@@ -1,0 +1,4 @@
+body {
+  background-color: #c3cccf;  /* Fallback background color */
+  background-image: linear-gradient(135deg, #c3cccf 0%, #b4b4c1 33%, #c5bfbf 66%, #dfd6d6 100%);
+}

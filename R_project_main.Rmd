@@ -1,73 +1,161 @@
 ---
-title: "R_project_main"
+title: "Analiza muzycznych platform streamingowych"
 author: "Jakub Piasek"
-date: "2024-05-27"
-output: html_document
+output:
+  prettydoc::html_pretty:
+    theme: hpstr
+    toc: true
+    css: styles.css
 ---
 
+# Opis projektu
+Celem tej analizy jest zbadanie różnic w bazie słuchaczy trzech serwisów streamingowych, jakimi są Spotify, Apple Music oraz YouTube. Różnice w najbardziej słuchanych gatunkach, artystach oraz piosenkach.
+Dodatkowo dla porównania jest również analizowany serwis iTunes, który tak jak Apple Music jest produktem firmy Apple.  iTunes służy jako biblioteka multimediów, odtwarzacz multimediów oraz radio. Powód dla którego został również tutaj zawarty to fakt, że przez wiele lat był głównym wyznacznikiem cyfrowej sprzedaży muzyki. Teraz w erze streamingu ta platforma nie jest aż tak powszechnie używana, więc służy za kontrast uzupełniający trudno dostępne statystki Apple Music.
 
-```{r cache=FALSE, echo=FALSE, results=FALSE}
+
+[Repozytorium na GitHub](https://github.com/sand194/music_dsp.git)
+
+
+```{r cache=FALSE, echo=FALSE, results=FALSE, warning=FALSE}
+# Managing project dependencies
+library(packrat)
+# packrat::unbundle("packrat/bundles/music_dsp-2024-06-08.tar.gz", "packrat")
+
+```
+
+### Ładowanie potrzebnych bibliotek
+```{r dependencies, warning=FALSE,message=FALSE,error=FALSE, results='hide'}
 library(tidyverse)
 library(lintr)
 library(ggthemes)
+library(ggrepel)
+library(plotly)
+library(fuzzyjoin)
+library(flextable)
+library(webshot)
+library(htmltools)
 
-# source("scraping.R", echo = F, local = knitr::knit_global())
+```
+
+# Źródło danych
+Dane pobrałem ze strony [kworb.net](https://kworb.net/) i jej wielu podstron. Jest to strona autora o nicku kworb. W łatwy sposób udostępnia on na niej różne statystki dotyczące tego jak radzi sobie branża muzyczna na serwisach streamingowych.
+Statystyki dla najbardziej streamowanych piosenek na Spotify zostały wzięte z [Wikipedii](https://en.wikipedia.org/wiki/List_of_Spotify_streaming_records), ponieważ na stronie [kworb.net](https://kworb.net/) nie zostały one udostępnione.
+
+Aby uzyskać metadane dotyczące gatunków w jakim piosenki oraz artyści wykonują, użyłem zestawu danych danych [MusicOSet](https://marianaossilva.github.io/DSW2019/).
+
+# Data pipeline
+Pipeline, którego użyłem do pozyskania danych oraz ich wczesnej technicznej obróbki.
+Linijki z komendą `source()` służyły mi podczas pracy, aby połączyć całą strukturę plików w repozytorium do jednego głównego pliku `.Rmd`. Niektóre są zakomentowane, ponieważ nie są potrzebne do eksportu reportu.
+
+## Web scraping
+Sposób w jaki pobrałem dane ze strony [kworb.net](https://kworb.net/) oraz [Wikipedii](https://en.wikipedia.org/wiki/List_of_Spotify_streaming_records).
+```{r scraping_source}
 knitr::read_chunk('scraping.R')
-```
-
-<!--
-```{r scraping.R, eval=T}
+# source("scraping.R", echo = F, local = knitr::knit_global())
 
 ```
--->
 
-<!--
-```{r, eval = F}
+- Plik źródłowy scrapowania danych
+```{r, echo=FALSE, results='asis'}
+code <- readLines("scraping.R")
+
+cat("```r\n")
+cat(code, sep = "\n")
+cat("\n```")
+```
+
+## Export danych
+Po scrapowaniu wyeksportowałem je do plików `.csv`, aby mieć je lokalnie zapisane w repozytorium. Ułatwia to uruchamianie projektu oraz zapobiega zmianie danych.
+
+```{r, eval = FALSE}
 knitr::read_chunk('data_export.R')
-source("data_export.R", echo = F, local = knitr::knit_global())
-```
--->
+# source("data_export.R", echo = F, local = knitr::knit_global())
 
-```{r}
-knitr::read_chunk('data_import.R')
+```
+
+- Plik źródłowy exportu danych
+```{r, echo=FALSE, results='asis'}
+code <- readLines("data_export.R")
+
+cat("```r\n")
+cat(code, sep = "\n")
+cat("\n```")
+```
+
+## Import danych
+Import surowych danych, które zostały na samym początku zescrapowane.
+```{r, warning=FALSE, warning=FALSE, message=FALSE}
 source("data_import.R", echo = F, local = knitr::knit_global())
+knitr::read_chunk('data_import.R')
+
+```
+
+- Plik źródłowy importu danych
+```{r data_import.R, eval=FALSE, warning=FALSE, message=FALSE}
+
 ```
 
 
-Ilość rekordów we wszystkich ramkach danych
-
+Ilość rekordów we wszystkich ramkach danych:
 ```{r}
-total_rows <- ls() %>%
-  set_names() %>%
-  map(~ get(.)) %>%
-  keep(is.data.frame) %>%
-  map_int(nrow) %>%
-  sum()
-
+all_objects <- ls()
+data_frame_objects <- all_objects[sapply(all_objects, function(x) is.data.frame(get(x)))]
+row_counts <- sapply(data_frame_objects, function(x) nrow(get(x)))
+total_rows <- sum(row_counts)
 
 total_rows
 
 total_rows > 30000
 ```
 
-# Czyszczenie danych
 
-### Usuwanie kolumny "Pos"
-Aby uniknąć duplikatów w kolumnach, należy usunąć kolumnę "Pos"
-
-```{r}
-source("cleaning.R", echo = F, local = knitr::knit_global())
+## Czyszczenie danych
+Dopuściłem się wstępnej obróbki surowo zescrapowanych danych, aby usunąć zduplikowane, bądź niepotrzebne kolumny i wiersze.
+```{r data_cleaning}
 knitr::read_chunk('cleaning.R')
+source("cleaning.R", echo = F, local = knitr::knit_global())
 ```
 
-```{r cleaning.R, eval=T}
+- Plik źródłowy czyszczenia danych
+```{r cleaning.R, eval=FALSE}
 
 ```
 
 
-# TODO - sklasyfikować jakie gatunki są najchętniej słuchane (relacja: artysta - gatunek) pomiędzy wszystkimi platformami, użyć MusicOSet
+## Funkcje do wizualizacji
+Przed utworzeniem konkretnych wizualizacji stworzyłem osobne funkcje, których używałem do stworzenia wielu podobnych wykresów, aby uniknąć redundancji w kodzie.
+```{r plots, warning=FALSE, message=FALSE}
+knitr::read_chunk('plots.R')
+source("plots.R", echo = F, local = knitr::knit_global())
+```
 
-```{r}
+- Plik źródłowy tworzenia wykresów
+```{r plots.R, eval=FALSE}
+
+```
+
+
+## Kustomizacja motywów
+Aby uniknąć podstawowego wyglądu dokumentu HTML.
+```{r customisation, warning=FALSE, message=FALSE}
+knitr::read_chunk('customisation.R')
+source("customisation.R", echo = F, local = knitr::knit_global())
+```
+
+- Plik źródłowy kustomizcji motywów
+```{r customisation.R, eval=FALSE}
+
+```
+
+
+
+
+
+# Analiza
+
+## Metadane artystów
+Na początek przetworzyłem ramkę danych `OSet_artists`, która zawierała metadane o artystach. Ujednoliciłem również niektóre największe gatunki, ponieważ same dane były bardzo rozdrobnione, co utrudniłoby analizę.
+```{r artist_metadata}
 # Data frame containing metadata about artists
 OSet_artists <- import("clean_data/musicoset_metadata/artists.csv")
 
@@ -89,21 +177,79 @@ OSet_artists <- OSet_artists %>%
 OSet_artists_genre <- OSet_artists %>%
   select(c("name", "main_genre"))
 
+
+flextable(head(OSet_artists_genre)) %>% theme_design()
+
 ```
 
 
+## Przetwarzanie danych
 
-Przetwarzanie, aby uzyskać ramkę danych z najchętniej słuchanymi gatunkami i ramkę danych z najchętniej słuchanymi artystami ogólnie
-```{r}
-# eu_artisttotals - only in europe
-# eua_artisttotals - based on albums - only in europe
-# ww_artisttotals
-# spotify_listeners
-# youtube_archive
-# apple_songs_artisttotals
-# apple_songs_eu_artisttotals - only in europe
+Przygotowanie ramek zawierających informacje o ilości streamów piosenek.
+```{r, warning=FALSE}
+# Top songs df cleaning
+ww_totals <- ww_totals %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(
+    Total = as.numeric(Total),
+    Today = as.numeric(Today)
+  ) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+apple_songs_totals <- apple_songs_totals %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+  mutate(
+    Total = as.numeric(Total),
+    Today = as.numeric(Today)
+  ) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+spotify_most_streamed_songs <- spotify_most_streamed_songs %>%
+  mutate_all(~ gsub('"', '', .)) %>%
+  rename(Total = 'Streams(billions)') %>%
+  mutate(Total = as.numeric(Total) * 1000000000) %>%
+  drop_na() %>% # dropping rows that were not matched
+  mutate('Artist and Title' = paste(`Artist(s)`, Song, sep = " - ")) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+# Vector of substrings to remove
+substrings_to_remove <- c("Official.*", "M/V", "MV", "Video")
+# Create a regex pattern from the vector of substrings
+pattern <- str_c(substrings_to_remove, collapse = "|")
+
+youtube_topvideos <- youtube_topvideos %>%
+  mutate(across(c("Views", "Yesterday"), ~ gsub('\\,', '', .))) %>%
+  mutate(across(c('Views', 'Yesterday'), ~ str_replace(., ",", ""))) %>%
+  mutate(across(c('Views'), ~ str_replace(., ',', ""))) %>%
+  mutate(
+    Views = as.numeric(Views),
+    Yesterday = as.numeric(Yesterday)
+  ) %>%
+  rename('Artist and Title' = Video) %>%
+  rename(Total = Views) %>%
+  mutate(`Artist and Title` = str_replace(`Artist and Title`, "\\(.*\\)", "")) %>%
+  mutate(`Artist and Title` = str_replace(`Artist and Title`, "\\[.*\\]", "")) %>%
+  mutate(`Artist and Title` = str_remove_all(`Artist and Title`, pattern)) %>%
+  select(`Artist and Title`, Total) %>%
+  arrange(desc(Total))
+
+```
 
 
+## Wszyskie platformy
+
+### Przetwarzanie danych
+Za pomocą nowo utworzonej ramki `OSet_artists_genre` z gatunkami i imionami artystów połączyłem ramki z [kworb.net](https://kworb.net/) zawierające informacje o tym ile byli słuchani, aby mieć pogląd na to jakie są najczęściej słuchane gatunki na wszystkich platformach.
+
+Należyte było przekonwertowanie niektórych kolumn, ponieważ wszystkie na początku były typu `character`.
+
+Dla pozostałych platform użyłem podobnych metod.
+```{r preferable_genres}
 colnames(OSet_artists_genre) <- c("Artist", "Genre")
 
 artists_genre_comparison <- ww_artisttotals%>%
@@ -127,10 +273,6 @@ artists_genre_comparison <- ww_artisttotals%>%
     by = "Artist",
     suffix = c(".ww", ".genre")
   )
-
-# Test to see if the are no duplicate rows
-artists_genre_comparison %>%
-  filter(Artist == "Adele")
 
 
 # Column cleaning
@@ -164,6 +306,8 @@ artists_genre_comparison <- artists_genre_comparison %>%
   arrange(desc(Sum_listeners_views_across))
 
 ```
+
+### Najczęściej słuchane gatunki
 ```{r}
 preferable_genres <- artists_genre_comparison %>%
   select(Artist, Genre, Sum_listeners_views_across) %>%
@@ -171,37 +315,581 @@ preferable_genres <- artists_genre_comparison %>%
   count() %>%
   arrange(desc(n))
 
-head(preferable_genres)
+
+preferable_genres_flex <- flextable(preferable_genres) %>% theme_design()
+
+flextable(head(preferable_genres)) %>% theme_design()
+
 
 ```
 
-# Wizualizacja - które gatunki są najbardziej słuchane ogólnie
+
+### Wizualizacja - gatunki
 ```{r}
-ggplot(
-  head(preferable_genres),
+bar_plot(preferable_genres, "#edc491", "Najczęciej słuchane gatunki", "plot_top_genres")
+plot_top_genres
+
+```
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_genres.png', plot = plot_top_genres, path = 'plots/')
+```
+
+
+### Najczęściej słuchani artyści
+```{r}
+preferable_artists <- artists_genre_comparison %>%
+  select(Artist, Sum_listeners_views_across) %>%
+  arrange(desc(Sum_listeners_views_across))
+
+flextable(top_n(preferable_artists, 10)) %>% theme_design()
+
+```
+
+
+### Wizualizacja - artyści
+```{r}
+bubble_plots(artists_genre_comparison, Sum_listeners_views_across, "#edc491", "Najczęściej streamowani artyści", "plot_top_artists")
+
+plot_top_artists
+
+```
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_artists.png', plot = plot_top_artists, path = 'plots/')
+```
+
+Wersja interaktywna:
+```{r}
+plot_top_artists_interactive
+```
+
+
+
+## Spotify
+
+### Przetwarzanie danych
+```{r}
+preferable_genres_spotify <- suppressWarnings({
+  spotify_artists %>%
+    mutate(across(c('Streams', 'Daily', 'As lead', 'Solo', 'As feature'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Streams', 'Daily', 'As lead', 'Solo', 'As feature'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".spotify", ".oset")
+    ) %>%
+    drop_na() %>% # Dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Streams
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+```
+
+
+### Najczęściej słuchane gatunki
+```{r}
+preferable_genres_spotify_flex <- flextable(preferable_genres_spotify) %>% add_header_lines("Spotify") %>% theme_design()
+
+flextable(head(preferable_genres_spotify)) %>% add_header_lines("Spotify") %>% theme_design()
+
+```
+
+
+### Wizualizacja - gatunki
+```{r}
+bar_plot(preferable_genres_spotify, "#6cd980", "Najczęściej słuchane gatunki na Spotify", "plot_top_genres_spotify")
+
+plot_top_genres_spotify
+
+```
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_genres_spotify.png', plot = plot_top_genres_spotify, path = 'plots/')
+```
+
+
+### Najczęściej słuchani artyści
+```{r}
+preferable_artists_spotify <- artists_genre_comparison %>%
+  select(Artist, Total.spotify) %>%
+  arrange(desc(Total.spotify))
+
+flextable(top_n(preferable_artists_spotify, 10)) %>% theme_design()
+
+```
+
+
+### Wizualizacja - artyści
+```{r}
+bubble_plots(artists_genre_comparison, Total.spotify, "#6cd980", "Najczęściej streamowani artyści na Spotify", "plot_top_artists_spotify")
+
+plot_top_artists_spotify
+
+```
+
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_artists_spotify.png', plot = plot_top_artists_spotify, path = 'plots/')
+```
+
+
+Wersja interaktywna:
+```{r}
+plot_top_artists_spotify_interactive
+```
+
+
+### Najczęściej słuchane piosenki
+```{r}
+spotify_most_streamed_songs_flex <- flextable(spotify_most_streamed_songs) %>% add_header_lines("Spotify") %>% theme_design()
+
+spotify_most_streamed_songs_scrollable_flex <- htmltools::tags$div(
+  style = "overflow-x: auto; overflow-y: auto; height: 400px; width: 100%;",
+  flextable::htmltools_value(spotify_most_streamed_songs_flex)
+)
+
+htmltools::HTML(as.character(spotify_most_streamed_songs_scrollable_flex))
+
+```
+
+
+
+## Apple Music
+
+### Przetwarzanie danych
+```{r}
+preferable_genres_apple <- suppressWarnings({
+  apple_songs_artisttotals %>%
+    mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Total', 'Today'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".apple", ".oset")
+    ) %>%
+    drop_na() %>% # dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Total
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+preferable_genres_apple <- preferable_genres_apple[-6,] # removing empty row
+
+```
+
+### Najczęściej słuchane gatunki
+```{r}
+preferable_genres_apple_flex <- flextable(preferable_genres_apple) %>% add_header_lines("Apple Music") %>% theme_design()
+
+flextable(head(preferable_genres_apple)) %>% add_header_lines("Apple Music") %>% theme_design()
+
+```
+
+### Wizualizacja - gatunki
+```{r}
+bar_plot(preferable_genres_apple, "#fa2a44", "Najczęściej słuchane gatunki na Apple Music", "plot_top_genres_apple")
+
+plot_top_genres_apple
+
+```
+
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_genres_apple.png', plot = plot_top_genres_apple, path = 'plots/')
+```
+
+
+### Najczęściej słuchani artyści
+```{r}
+preferable_artists_apple <- artists_genre_comparison %>%
+  select(Artist, Total.apple) %>%
+  arrange(desc(Total.apple))
+
+flextable(top_n(preferable_artists_apple, 10)) %>% theme_design()
+
+```
+
+### Wizualizacja - artyści
+```{r}
+bubble_plots(artists_genre_comparison, Total.apple, "#e04a5d", "Najczęściej streamowani artyści na Apple Music", "plot_top_artists_apple")
+
+plot_top_artists_apple
+```
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_artists_apple.png', plot = plot_top_artists_apple, path = 'plots/')
+```
+
+
+Wersja interaktywna:
+```{r}
+plot_top_artists_apple_interactive
+```
+
+### Najczęściej słuchane piosenki
+```{r}
+apple_songs_totals_flex <- flextable(apple_songs_totals) %>% add_header_lines("Apple Music") %>% theme_design()
+
+apple_songs_totals_scrollable_flex <- htmltools::tags$div(
+  style = "overflow-x: auto; overflow-y: auto; height: 400px; width: 100%;",
+  flextable::htmltools_value(apple_songs_totals_flex)
+)
+
+htmltools::HTML(as.character(apple_songs_totals_scrollable_flex))
+
+```
+
+
+
+## YouTube
+
+### Przetwarzanie danych
+```{r}
+preferable_genres_yt <- suppressWarnings({
+  youtube_archive %>%
+    mutate(across(c('Total', '100M'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Total', '100M'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".youtube", ".oset")
+    ) %>%
+    drop_na() %>% # Dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Total
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+```
+
+### Najczęściej słuchane gatunki
+```{r}
+preferable_genres_yt_flex <- flextable(preferable_genres_yt) %>% add_header_lines("YouTube") %>% theme_design()
+
+flextable(head(preferable_genres_yt)) %>% add_header_lines("YouTube") %>% theme_design()
+
+```
+
+### Wizualizacja - gatunki
+```{r}
+bar_plot(preferable_genres_yt, "#db0000", "Najczęściej słuchane gatunki na YouTube", "plot_top_genres_yt")
+
+plot_top_genres_yt
+
+```
+
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_genres_yt.png', plot = plot_top_genres_yt, path = 'plots/')
+```
+
+
+### Najczęściej słuchani artyści
+```{r}
+preferable_artists_youtube <- artists_genre_comparison %>%
+  select(Artist, Total.youtube) %>%
+  arrange(desc(Total.youtube))
+
+flextable(top_n(preferable_artists_youtube, 10)) %>% theme_design()
+
+```
+
+### Wizualizacja - artyści
+```{r}
+bubble_plots(artists_genre_comparison, Total.youtube, "#deb3b1", "Najczęściej streamowani artyści na YouTube", "plot_top_artists_yt")
+
+plot_top_artists_yt
+
+```
+
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_artists_yt.png', plot = plot_top_artists_yt, path = 'plots/')
+```
+
+
+Wersja interaktywna:
+```{r}
+plot_top_artists_yt_interactive
+```
+
+### Najczęściej słuchane piosenki
+```{r}
+youtube_topvideos_flex <- flextable(youtube_topvideos) %>% add_header_lines("YouTube") %>% theme_design()
+
+youtube_topvideos_scrollable_flex <- htmltools::tags$div(
+  style = "overflow-x: auto; overflow-y: auto; height: 400px; width: 100%;",
+  flextable::htmltools_value(youtube_topvideos_flex)
+)
+
+htmltools::HTML(as.character(youtube_topvideos_scrollable_flex))
+
+```
+
+
+## iTunes
+
+### Przetwarzanie danych
+```{r}
+preferable_genres_itunes <- suppressWarnings({
+  ww_artisttotals %>%
+    mutate(across(c('Total', 'Today'), ~ str_replace(., ",", ""))) %>%
+    mutate(across(c('Total', 'Today'), ~ as.numeric(.) * 1000000)) %>%
+    left_join(
+      OSet_artists_genre,
+      by = "Artist",
+      suffix = c(".ww", ".oset")
+    ) %>%
+    drop_na() %>% # dropping rows that were not matched in left_join
+    select(
+      Artist, Genre, Total
+    ) %>%
+    group_by(Genre) %>%
+    count() %>%
+    arrange(desc(n))
+})
+
+```
+
+### Najczęściej słuchane gatunki
+```{r}
+preferable_genres_itunes <- preferable_genres_itunes[-5,] # removing empty genre row
+
+preferable_genres_itunes_flex <- flextable(preferable_genres_itunes) %>% add_header_lines("iTunes") %>% theme_design()
+
+flextable(head(preferable_genres_itunes)) %>% add_header_lines("iTunes") %>% theme_design()
+
+```
+
+### Wizualizacja - gatunki
+```{r}
+bar_plot(preferable_genres_itunes, "#649fe8", "Najczęściej słuchane gatunki na iTunes", "plot_top_genres_itunes")
+
+plot_top_genres_itunes
+
+```
+
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_genres_itunes.png', plot = plot_top_genres_itunes, path = 'plots/')
+```
+
+
+### Najczęściej słuchani artyści
+```{r}
+preferable_artists_itunes <- artists_genre_comparison %>%
+  select(Artist, Total.ww) %>%
+  arrange(desc(Total.ww))
+
+flextable(top_n(preferable_artists_itunes , 10)) %>% theme_design()
+
+```
+
+### Wizualizacja - artyści
+```{r}
+bubble_plots(artists_genre_comparison, Total.ww, "#649fe8", "Najczęściej streamowani artyści na iTunes", "plot_top_artists_itunes")
+
+plot_top_artists_itunes
+```
+
+
+```{r, echo=FALSE, results='hide'}
+ggsave('plot_top_artists_itunes.png', plot = plot_top_artists_itunes, path = 'plots/')
+```
+
+
+Wersja interaktywna:
+```{r}
+plot_top_artists_itunes_interactive
+```
+
+### Najczęściej słuchane piosenki
+```{r}
+ww_totals_flex <- flextable(ww_totals) %>% add_header_lines("iTunes") %>% theme_design()
+
+ww_totals_scrollable_flex <- htmltools::tags$div(
+  style = "overflow-x: auto; overflow-y: auto; height: 400px; width: 100%;",
+  flextable::htmltools_value(ww_totals_flex)
+)
+
+htmltools::HTML(as.character(ww_totals_scrollable_flex))
+
+```
+
+
+
+## Podobieństwa i różnice
+Ile jest tych samych a ile różnych piosenek pomiędzy wszystkimi platformami?
+
+### Przetwarzanie danych
+```{r, warning=FALSE,message=FALSE,error=FALSE, results='hide'}
+top_songs_total <- bind_rows(spotify_most_streamed_songs %>% top_n(50), ww_totals %>% top_n(50), apple_songs_totals %>% top_n(50), youtube_topvideos %>% top_n(50))
+
+top_songs_total_scatter <- top_songs_total %>%
+  group_by(`Artist and Title`) %>%
+  mutate(is_duplicate = n() > 1) %>%
+  ungroup()
+
+count_data <- top_songs_total_scatter %>%
+  summarise(count_true = sum(is_duplicate),
+            count_false = sum(!is_duplicate))
+
+top_songs_total_bar <- data.frame(
+  Duplicate = c("Same", "Different"),
+  Count = c(count_data$count_true, count_data$count_false)
+)
+
+count_data_flex <- flextable(count_data) %>% theme_design()
+
+```
+
+```{r}
+count_data_flex
+
+```
+
+Z top 50 najwięcej słuchanych piosenek ze wszystkich platform jedynie 57 pokrywa się.
+```{r}
+(count_data$count_true/(count_data$count_false + count_data$count_true))*100
+
+```
+Co stanowi jedynie 28,5%.
+
+
+### Wizualizacja
+```{r, warning=FALSE,message=FALSE,error=FALSE, results='hide'}
+top_songs_differences_bar_plot <- top_songs_total_bar %>% ggplot(
   aes(
-    x = reorder(Genre, -n),
-    y = n)
-) + geom_bar(
-  stat = "identity",
-  width = 0.5,
-  fill = "#581845"
-  ) + labs(
-    title = "Najchętniej słuchane gatunki"
-  ) + xlab(
-    ""
-    ) + ylab(
+    x = Duplicate,
+    y = Count,
+    fill = Duplicate
+    )
+  ) + geom_bar(
+    stat = "identity",
+    width = 0.5,
+    ) + labs(
+      title = "Różnice w top 100 piosenek z każdego serwisu",
+    ) + xlab(
       ""
-    ) + theme_wsj() + scale_colour_wsj("colors6") + scale_fill_wsj("colors6")
+      ) + ylab(
+        ""
+      ) + theme_fivethirtyeight() + scale_fill_fivethirtyeight() + theme(
+        plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 10),
+        legend.position = "none"
+     ) + 
+    scale_fill_manual(values = c("Same" = "#d13e2e", "Different" = "#2e85d1"))
+
+
+top_songs_differences_scatter_plot <- top_songs_total_scatter %>% ggplot(aes(x = `Artist and Title`, y = Total, color = is_duplicate)) +
+  geom_point(size = 3) +
+  scale_y_log10() +
+  labs(
+      title = "Różnice w top 100 piosenek z każdego serwisu"
+    ) + xlab(
+      "Ilość streamów"
+      ) + ylab(
+        ""
+      ) + theme_fivethirtyeight() + scale_fill_fivethirtyeight() + theme(
+        plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 10),
+        legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+        panel.grid.minor = element_line(color = "grey95", linewidth = 0.25)
+     ) + 
+  scale_color_manual(values = c("TRUE" = "#d13e2e", "FALSE" = "#2e85d1"))
+
+
+
+top_songs_differences_bar_plot
+top_songs_differences_scatter_plot
 ```
 
-# Wizualizacja - najchętniej słuchani artyści na wszystkich platformach
+
+# Podsumowanie
+## Najczęściej słuchane gatunki
 ```{r}
-# TODO
-# pogrupowac ramki wedlug liczb z poszczegolnych serwisow
+plot_top_genres
+plot_top_genres_spotify
+plot_top_genres_apple
+plot_top_genres_yt
+plot_top_genres_itunes
 
-artists_genre_comparison %>%
-  select(Artist, Total.ww, Total.spotify, Total.youtube, Total.apple)
+```
 
+## Najczęściej słuchani artyści
+```{r}
+plot_top_artists_interactive
+plot_top_artists_spotify_interactive
+plot_top_artists_apple_interactive
+plot_top_artists_yt_interactive
+plot_top_artists_itunes_interactive
+```
+
+
+## Najczęściej słuchane piosenki
+```{r}
+htmltools::HTML(as.character(spotify_most_streamed_songs_scrollable_flex))
+htmltools::HTML(as.character(apple_songs_totals_scrollable_flex))
+htmltools::HTML(as.character(youtube_topvideos_scrollable_flex))
+htmltools::HTML(as.character(ww_totals_scrollable_flex))
+
+```
+
+
+## Wnioski
+- W najczęściej słuchanych gatunkach zawsze pojawiały się: Pop, Rap oraz Rock
+Nie jest zaskoczeniem, że gatunek Pop jest najbardziej popularny. W dzisiejszych czaszch tak samo Rap, który aktualnie zaczyna powoli wypierać klasyczną muzykę Pop. Dlatego powstaje coraz więcej łączenia tych dwóch gatunków.
+- Gatunek Rock, który stoi na trzecim miejscu, pomimo ogólnej percepcji, że ten gatunek powoli umiera
+- Gatunek Latin, który pnie się coraz wyżej, wywierając wpływ na inne gatunki
+- Gatunki na platformach Spotify oraz Apple Music były w miarę do siebie zbliżone, na iTunes country wyprzedziło rap, na YouTube pojawił się alternative metal
+- Spotify oraz Apple Music były w miarę zbliżone do siebie pod względem topowych artystów, lecz na różnych pozycjach
+- iTunes oraz YouTube są zdominowane przez artystów z większymi hitami, po których dopiero pojawiają się artyści widziani z pozostałych platform
+- Najczęściej słuchane piosenki na iTunes to w większości piosenki z największą popularnością około 10 lat temu
+- Najczęściej słuchane piosenki na YouTube zawierają najwięcej artystów jednego przeboju
+- Najwięcej słuchaczy posiada Spotify
+
+
+
+
+Ilość linijek we wszystkich plikach:
+```{bash, engine.opts='-l'}
+count_lines_of_code() {
+    local directory="$1"
+    local exclude_directory="$2"
+    local total_lines=0
+
+    if [ -z "$directory" ]; then
+        echo "Please provide a directory."
+        return 1
+    fi
+
+    if [ -z "$exclude_directory" ]; then
+        echo "Please provide a directory to exclude."
+        return 1
+    fi
+
+    # Find all .R and .Rmd files in the specified directory excluding the exclude_directory and count their lines
+    for file in $(find "$directory" -path "$exclude_directory" -prune -o -type f \( -name "*.R" -o -name "*.Rmd" \) -print); do
+        local lines=$(wc -l < "$file")
+        total_lines=$((total_lines + lines))
+    done
+
+    echo "Total lines of code in .R and .Rmd files in $directory excluding $exclude_directory: $total_lines"
+}
+
+# Call the function with a specific directory and exclude directory
+count_lines_of_code "." "./packrat"
 ```
 

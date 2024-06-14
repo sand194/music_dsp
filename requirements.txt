@@ -2,4 +2,13 @@
 "lintr",
 "rvest",
 "rio",
-"ggthemes"
+"ggthemes",
+"plotly",
+"ggrepel",
+"fuzzyjoin",
+"flextable",
+"magittr",
+"webshot",
+"htmltools",
+"hpstr",
+"prettydoc"
