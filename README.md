@@ -1,10 +1,10 @@
 # music_dsp
 
 #### Table of contents
-- [Data source](#Data source)
-- [Data pipeline](#Data pipeline)
-- [Plots](#Plots)
-- [Color](#color)
+- [Data source](#data-source)
+- [Data pipeline](#data-pipeline)
+- [Plots](#plots)
+- [Instructions](#instructions)
 
 The goal of this analysis is to examine the differences in the listener base of three streaming services: Spotify, Apple Music, and YouTube. This includes differences in the most listened-to genres, artists, and songs. Additionally, for comparison, the iTunes service is also analyzed. Like Apple Music, iTunes is a product of Apple Inc. iTunes serves as a media library, media player, and radio. The reason it is included here is that for many years it was the main benchmark for digital music sales. Now, in the era of streaming, this platform is not as commonly used, so it serves as a contrasting complement to the hard-to-find statistics for Apple Music.
 
@@ -60,14 +60,14 @@ Here are the main plots from the analysis.
 
 # Instructions
   Clone the repository:
-'''bash
+```bash
   git clone https://github.com/sand194/music_dsp
-'''
+```
 
 ## Navigate to the repository:
-'''bash
+```bash
   cd music_dsp
-'''
+```
 
 ## Run the analysis:
 Open the main .Rmd file in RStudio and knit it to generate the report.
