@@ -817,6 +817,12 @@ top_songs_differences_scatter_plot
 ```
 
 
+```{r, echo=FALSE, results='hide'}
+ggsave('top_songs_differences_bar_plot.png', plot = top_songs_differences_bar_plot, path = 'plots/')
+ggsave('top_songs_differences_scatter_plot.png', plot = top_songs_differences_scatter_plot, path = 'plots/')
+```
+
+
 # Podsumowanie
 ## Najczęściej słuchane gatunki
 ```{r}
