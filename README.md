@@ -61,12 +61,12 @@ Here are the main plots from the analysis.
 # Instructions
   Clone the repository:
 ```shell
-  git clone https://github.com/sand194/music_dsp
+git clone https://github.com/sand194/music_dsp
 ```
 
 ## Navigate to the repository:
 ```shell
-  cd music_dsp
+cd music_dsp
 ```
 
 ## Run the analysis:
