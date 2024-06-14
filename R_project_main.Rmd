@@ -2,7 +2,7 @@
 title: "Analiza muzycznych platform streamingowych"
 author: "Jakub Piasek"
 output:
-  prettydoc::html_pretty:
+    prettydoc::html_pretty:
     theme: hpstr
     toc: true
     css: styles.css
@@ -862,7 +862,6 @@ Nie jest zaskoczeniem, że gatunek Pop jest najbardziej popularny. W dzisiejszyc
 
 
 
-
 Ilość linijek we wszystkich plikach:
 ```{bash, engine.opts='-l'}
 count_lines_of_code() {
@@ -892,4 +891,3 @@ count_lines_of_code() {
 # Call the function with a specific directory and exclude directory
 count_lines_of_code "." "./packrat"
 ```
-
