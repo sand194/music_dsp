@@ -70,7 +70,7 @@ cd music_dsp
 ```
 
 ## Run the analysis:
-Open the main .Rmd file in RStudio and knit it to generate the report.
+Open the main .Rmd file in RStudio and knit it to generate the report (the text is in polish).
 
 ## Notes
 Ensure all necessary packages are installed before running the scripts. The commented lines in the pipeline can be uncommented if additional processing steps are required.
